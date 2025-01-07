@@ -1,0 +1,134 @@
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UserDataContext } from "../context/UserContext";
+
+const RegisterPage = () => {
+  const [username, setUsername] = React.useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [Image, setImage] = useState("");
+
+  const navigate = useNavigate();
+
+  const { user, setUser } = useContext(UserDataContext);  
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      const newUser = {
+        username,
+        name,
+        email,
+        password,
+        image: Image,
+      };
+
+      const response = await axios.post( `${import.meta.env.VITE_BASE_URL}/user/register`, newUser );
+
+      if (response.status === 201 && response.data) {
+        console.log("User registered:", response.data);
+        setUser(response.data.user);
+        navigate("/login");
+      } else {
+        throw new Error("Unexpected response format");
+      }
+      setEmail("");
+      setName("");
+      setPassword("");
+      setUsername("");
+      setImage("");
+    } catch (error) {
+      console.error(
+        "Registration error:", error.response?.data || error.message
+      );
+      alert("An error occurred during registration.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-800 flex items-center justify-center">
+      <div className="max-w-md w-full bg-gray-900 text-white p-8 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold mb-6 text-center">Create User</h1>
+        <form onSubmit={handleRegister} className="space-y-4">
+          {/* Username Input */}
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your Username"
+            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            name="username"
+          />
+
+          {/* Name Input */}
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your Name"
+            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            name="name"
+          />
+
+          {/* Email Input */}
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter Your Email"
+            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            name="email"
+          />
+
+          {/* Password Input */}
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your Password"
+            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            name="password"
+          />
+
+          {/* Profile Image Input */}
+          <input
+            type="text"
+            value={Image}
+            onChange={(e) => setImage(e.target.value)}
+            placeholder="Enter your Profile Image URL"
+            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            name="image"
+          />
+
+          {/* Submit Button */}
+          <input
+            type="submit"
+            value="Create"
+            className="w-full py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-105"
+          />
+        </form>
+
+        <h6 className="my-6 text-center">
+          Already have an account?
+          <a
+            className="font-bold text-indigo-500 hover:underline"
+            href="/login"
+          >
+            {" "}
+            Login here
+          </a>
+          <p className="text-blue-500">
+            <a href="/" className="font-bold hover:underline">
+              Go Back
+            </a>
+          </p>
+        </h6>
+      </div>
+    </div>
+  );
+};
+
+export default RegisterPage;
