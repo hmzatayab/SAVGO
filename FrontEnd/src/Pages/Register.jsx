@@ -40,6 +40,9 @@ const RegisterPage = () => {
       setPassword("");
       setUsername("");
       setImage("");
+
+      console.log(user);
+      
     } catch (error) {
       console.error(
         "Registration error:", error.response?.data || error.message
