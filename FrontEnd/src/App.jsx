@@ -4,6 +4,7 @@ import Home from "./Pages/Home";
 import { LoginPage } from "./Pages/login";
 import RegisterPage from "./Pages/Register";
 import UploadImage from "./Pages/Upload";
+import ProfilePage from "./Pages/Profile";
 
 function App() {
   return(
@@ -13,6 +14,7 @@ function App() {
         <Route path="/login" element={<LoginPage/>}/>
         <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/upload" element={<UploadImage/>}/>
+        <Route path="/profile" element={<ProfilePage/>}/>
       </Routes>
     </div>
   )

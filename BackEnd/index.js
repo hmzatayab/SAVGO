@@ -3,6 +3,7 @@ const userRoute = require("./Routes/user.routes");
 const profileRoute = require("./Routes/profile.routes");
 const companyRoute = require("./Routes/company.routes");
 const menuRoute = require("./Routes/menu.routes");
+const paymentRoute = require("./Routes/payment.routes");
 const app = express();
 const dotenv = require("dotenv");
 const connectDB = require("./config/db.config");
@@ -94,8 +95,9 @@ app.use("/menu", menuRoute, (req, res) => {
   res.redirect("/");
 });
 
+
 // Server
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:9687/`);
+  console.log(`Server is running on ${PORT}`);
 });
