@@ -31,7 +31,7 @@ const RegisterPage = () => {
       if (response.status === 201 && response.data) {
         console.log("User registered:", response.data);
         setUser(response.data.user);
-        navigate("/login");
+        navigate("/");
       } else {
         throw new Error("Unexpected response format");
       }

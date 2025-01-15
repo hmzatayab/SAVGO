@@ -1,96 +1,83 @@
-const { validationResult } = require("express-validator");
-const userModle = require("../Modules/user.modle");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import userModel from "../models/user.model.js";
 
-// Register user
-async function register(req, res) {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      error: errors,
-      message: "Invalid Value",
-    });
-  }
-
-  const { name, username, email, password, image } = req.body;
-
-  const imageUrl = image || "https://via.placeholder.com/150";
-
-  const hashPassword = await bcrypt.hash(password, 10);
+export const userRegister = async (req, res) => {
+  const { username, name, email, password, image } = req.body;
 
   try {
-    const user = await userModle.create({
+    if (!username || !name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const userExists = await userModel.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+
+    const user = await userModel.create({
       username,
       name,
       email,
       password: hashPassword,
-      image: imageUrl,
+      image,
     });
 
-    // Send success response
-    return res.status(201).json({
-      message: "User registered successfully",
-      user,
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+    });
+
+    res.status(201).json({
+      token,
+      ...user._doc,
+      password: null,
     });
   } catch (error) {
-    console.error("Error registering user:", error);
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Server Error" });
   }
-}
+};
 
-// Login user
-async function login(req, res) {
-  try {
-    const errors = validationResult(req);
-
-    // Handle validation errors
-    if (!errors.isEmpty()) {
-      return res.status(400).render("login", {
-        error: "Invalid input values. Please try again.",
-      });
-    }
-
+export const userLogin = async (req, res) => {
     const { username, password } = req.body;
 
-    // Find user
-    const user = await userModle.findOne({ username });
-    if (!user) {
-      return res.status(400).render("login", {
-        error: "Invalid username or password.",
-      });
+  try {
+    if (!username || !password) {
+      return res.status(400).json({ message: "Both fields are required" });
     }
 
-    // Check password match
+    const user = await userModel.findOne({ username });
+    
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).render("login", {
-        error: "Invalid username or password.",
-      });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // JWT Token Create
-    const token = jwt.sign(
-      {
-        userid: user._id,
-        username: user.username,
-        name: user.name,
-        email: user.email,
-      },
-      process.env.JWT_SECRET
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.cookie("token", token);
-    res.redirect("/");
-  } catch (e) {
-    console.error(e);
-    res.status(500).render({
-      error: "Something went wrong on the server.",
+    res.cookie("token", token, {
+        httpOnly: true,
     });
+
+    res.status(200).json({ 
+        token,
+        ...user._doc,
+        password: null,
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
   }
 }
-
-module.exports = { register, login };

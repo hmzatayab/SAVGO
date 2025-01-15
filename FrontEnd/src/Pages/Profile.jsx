@@ -3,7 +3,8 @@ import { Header } from "../Components/Header";
 
 const ProfilePage = () => {
   return (
-    <Header></Header>,
+    <>
+    <Header/>
     <div className="p-8 space-y-8">
       {/* Profile Section */}
       <div className="bg-gray-700 shadow rounded-lg p-6 flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
@@ -146,6 +147,7 @@ const ProfilePage = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 

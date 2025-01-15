@@ -1,5 +1,6 @@
 import React from "react";
 import { Avatar, Dropdown } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   return (
@@ -7,8 +8,8 @@ export const Header = () => {
       <nav className="bg-gray-900 border-gray-700 rounded-lg">
         <div className="flex flex-wrap justify-between items-center max-w-screen-xl mx-auto px-4 py-3">
           {/* Logo Section */}
-          <a
-            href="/"
+          <Link
+            to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img
@@ -16,7 +17,7 @@ export const Header = () => {
               alt="Logo"
               className="w-44"
             />
-          </a>
+          </Link>
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-4">

@@ -1,47 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/UserContext";
 
 export const LoginPage = () => {
+  const [username, setUsername] = useState(""); // State for username
+  const [password, setPassword] = useState(""); // State for password
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const { user, setUser } = useContext(UserDataContext);  
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const username = formData.get("username");
-    const password = formData.get("password");
 
-    // Add your login logic here
+    // Validation
     if (!username || !password) {
       setErrorMessage("Both fields are required!");
       return;
     }
 
-    // Simulate successful login (replace with API logic)
-    setErrorMessage(""); // Clear errors
-    alert(`Welcome, ${username}!`);
+    const userLogin = {
+      username,
+      password,
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/user/login`,
+        userLogin
+      );
+
+      if (response.status === 200 && response.data) {
+        console.log("User logged in:", response.data);
+        setUser(response.data.user); // Update context
+        navigate("/profile"); // Navigate to profile page
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Login failed");
+    }
+
+    // Reset form fields
+    setUsername("");
+    setPassword("");
   };
 
   return (
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
       <div className="max-w-md w-full bg-gray-900 text-white p-8 rounded-lg shadow-lg">
-        {/* Page Title */}
         <h1 className="text-3xl font-bold mb-6 text-center">Login User</h1>
 
-        {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4 mb-4">
           {/* Username Input */}
           <input
             type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your Username"
             className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
-            name="username"
           />
 
           {/* Password Input */}
           <input
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your Password"
             className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
-            name="password"
           />
 
           {/* Submit Button */}
@@ -72,7 +96,6 @@ export const LoginPage = () => {
           </div>
         )}
 
-        {/* Registration Link */}
         <h6 className="my-6 text-center">
           Don't have an account?
           <a className="font-bold text-blue-500" href="/register">
@@ -81,7 +104,6 @@ export const LoginPage = () => {
           </a>
         </h6>
 
-        {/* Back Link */}
         <p className="text-center">
           <a href="/" className="text-blue-500 font-bold">
             Go Back
@@ -91,5 +113,3 @@ export const LoginPage = () => {
     </div>
   );
 };
-
-
