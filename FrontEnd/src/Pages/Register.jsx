@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserDataContext } from "../context/UserContext";
 
@@ -12,7 +12,7 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-  const { user, setUser } = useContext(UserDataContext);  
+  const { user, setUser } = useContext(UserDataContext);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -26,12 +26,15 @@ const RegisterPage = () => {
         image: Image,
       };
 
-      const response = await axios.post( `${import.meta.env.VITE_BASE_URL}/user/register`, newUser );
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/user/register`,
+        newUser
+      );
 
-      if (response.status === 201 && response.data) {
+      if (response.status === 201) {
         console.log("User registered:", response.data);
-        setUser(response.data.user);
-        navigate("/");
+        navigate("/login");
+        console.log(user);
       } else {
         throw new Error("Unexpected response format");
       }
@@ -40,12 +43,10 @@ const RegisterPage = () => {
       setPassword("");
       setUsername("");
       setImage("");
-
-      console.log(user);
-      
     } catch (error) {
       console.error(
-        "Registration error:", error.response?.data || error.message
+        "Registration error:",
+        error.response?.data || error.message
       );
       alert("An error occurred during registration.");
     }
@@ -116,17 +117,17 @@ const RegisterPage = () => {
 
         <h6 className="my-6 text-center">
           Already have an account?
-          <a
+          <Link
+            to={"/login"}
             className="font-bold text-indigo-500 hover:underline"
-            href="/login"
           >
             {" "}
             Login here
-          </a>
+          </Link>
           <p className="text-blue-500">
-            <a href="/" className="font-bold hover:underline">
+            <Link to={"/"} className="font-bold hover:underline">
               Go Back
-            </a>
+            </Link>
           </p>
         </h6>
       </div>

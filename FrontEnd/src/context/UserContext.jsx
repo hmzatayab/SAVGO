@@ -1,15 +1,15 @@
 import React, { createContext, useState } from "react";
 
-
 export const UserDataContext = createContext();
 
-function UserContext({ children }) {
+const UserContext = ({ children }) => {
   const [user, setUser] = useState({
     username: "",
     name: "",
     email: "",
     image: "",
   });
+
   return (
     <div>
       <UserDataContext.Provider value={{ user, setUser }}>
@@ -17,6 +17,6 @@ function UserContext({ children }) {
       </UserDataContext.Provider>
     </div>
   );
-}
+};
 
 export default UserContext;

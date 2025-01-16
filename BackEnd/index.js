@@ -5,11 +5,15 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRouter from './routers/user.routes.js';
 
-cookieParser();
 dotenv.config();
 connectDB();
 const app = express();
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173", // Replace this with your frontend URL
+  credentials: true, // Allow cookies to be sent
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -5,6 +5,8 @@ import { LoginPage } from "./Pages/login";
 import RegisterPage from "./Pages/Register";
 import UploadImage from "./Pages/Upload";
 import ProfilePage from "./Pages/Profile";
+import { LogoutPage } from "./Pages/Logout";
+
 
 function App() {
   return(
@@ -15,6 +17,7 @@ function App() {
         <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/upload" element={<UploadImage/>}/>
         <Route path="/profile" element={<ProfilePage/>}/>
+        <Route path="/logout" element={<LogoutPage/>}/>
       </Routes>
     </div>
   )

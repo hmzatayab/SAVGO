@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 
 export const LoginPage = () => {
   const [username, setUsername] = useState(""); // State for username
   const [password, setPassword] = useState(""); // State for password
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
-  const { user, setUser } = useContext(UserDataContext);  
+  const { user, setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -25,15 +25,13 @@ export const LoginPage = () => {
     };
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/user/login`,
-        userLogin
-      );
-
-      if (response.status === 200 && response.data) {
-        console.log("User logged in:", response.data);
-        setUser(response.data.user); // Update context
-        navigate("/profile"); // Navigate to profile page
+      const response = await axios.post( `${import.meta.env.VITE_BASE_URL}/user/login`, userLogin, { withCredentials: true } );
+      
+      if (response.status === 200) {
+        const data = response.data
+        setUser(data.user)
+        localStorage.setItem('token', data.token)
+        navigate("/profile");
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed");
@@ -98,16 +96,16 @@ export const LoginPage = () => {
 
         <h6 className="my-6 text-center">
           Don't have an account?
-          <a className="font-bold text-blue-500" href="/register">
+          <Link to={"/register"} className="font-bold text-blue-500">
             {" "}
             Register here
-          </a>
+          </Link>
         </h6>
 
         <p className="text-center">
-          <a href="/" className="text-blue-500 font-bold">
+          <Link to={"/"} className="text-blue-500 font-bold">
             Go Back
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -3,6 +3,8 @@ import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 export const Header = () => {
+  const token = localStorage.getItem("token")
+  
   return (
     <div className="sticky top-0 z-50 bg-gray-800 shadow-md p-5">
       <nav className="bg-gray-900 border-gray-700 rounded-lg">
@@ -27,32 +29,83 @@ export const Header = () => {
           </div>
 
           {/* Profile Section */}
-          <div className="flex justify-end space-x-4 w-[176px]">
-          <Dropdown
-          className="bg-gray-700"
-            label={
-              <Avatar
-                alt="User settings"
-                img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                rounded
-              />
-            }
-            arrowIcon={false}
-            inline
-          >
-            <Dropdown.Header className="text-white bg-gray-700">
-              <span className="block text-sm">Bonnie Green</span>
-              <span className="block truncate text-sm font-medium">
-                name@flowbite.com
-              </span>
-            </Dropdown.Header>
-            <Dropdown.Item className="text-white hover:text-black">Dashboard</Dropdown.Item>
-            <Dropdown.Item className="text-white hover:text-black">Settings</Dropdown.Item>
-            <Dropdown.Item className="text-white hover:text-black">Earnings</Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item className="text-white hover:text-black"> Sign out</Dropdown.Item>
-          </Dropdown>
-          </div>
+          {/* <div className="flex justify-end space-x-4 w-[176px]">
+            <Dropdown
+              className="bg-gray-700"
+              label={
+                <Avatar
+                  alt="User settings"
+                  img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                  rounded
+                />
+              }
+              arrowIcon={false}
+              inline
+            >
+              <Dropdown.Header className="text-white bg-gray-700">
+                <span className="block text-sm">Bonnie Green</span>
+                <span className="block truncate text-sm font-medium">
+                  name@flowbite.com
+                </span>
+              </Dropdown.Header>
+              <Dropdown.Item className="text-white hover:text-black">
+                <Link to={"/profile"}>Dashboard</Link>
+              </Dropdown.Item>
+              <Dropdown.Item className="text-white hover:text-black">
+                Settings
+              </Dropdown.Item>
+              <Dropdown.Item className="text-white hover:text-black">
+                Earnings
+              </Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item className="text-white hover:text-black">
+                <Link to={"/logout"}>Sign out</Link>
+              </Dropdown.Item>
+            </Dropdown>
+          </div> */}
+
+          {token ? (
+            <div className="flex justify-end space-x-4 w-[176px]">
+              <Dropdown
+                className="bg-gray-700"
+                label={
+                  <Avatar
+                    alt="User settings"
+                    img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                    rounded
+                  />
+                }
+                arrowIcon={false}
+                inline
+              >
+                <Dropdown.Header className="text-white bg-gray-700">
+                  <span className="block text-sm">Bonnie Green</span>
+                  <span className="block truncate text-sm font-medium">
+                    name@flowbite.com
+                  </span>
+                </Dropdown.Header>
+                <Dropdown.Item className="text-white hover:text-black">
+                  <Link to={"/profile"}>Dashboard</Link>
+                </Dropdown.Item>
+                <Dropdown.Item className="text-white hover:text-black">
+                  Settings
+                </Dropdown.Item>
+                <Dropdown.Item className="text-white hover:text-black">
+                  Earnings
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item className="text-white hover:text-black">
+                  <Link to={"/logout"}>Sign out</Link>
+                </Dropdown.Item>
+              </Dropdown>
+            </div>
+          ) : (
+            <div>
+              <h4 className="text-white">
+                <Link to={"/login"}>Please Login</Link>
+              </h4>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -70,15 +123,15 @@ export const Header = () => {
 
 // Reusable MenuButton Component
 const MenuButton = ({ label, icon, notificationCount }) => {
-    return (
-      <button className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800 border border-gray-600 rounded-md hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-blue-500">
-        <i className={`${icon} me-2`}></i>
-        {label}
-        {notificationCount && (
-          <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
-            {notificationCount}
-          </span>
-        )}
-      </button>
-    );
+  return (
+    <button className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800 border border-gray-600 rounded-md hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-blue-500">
+      <i className={`${icon} me-2`}></i>
+      {label}
+      {notificationCount && (
+        <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
+          {notificationCount}
+        </span>
+      )}
+    </button>
+  );
 };
