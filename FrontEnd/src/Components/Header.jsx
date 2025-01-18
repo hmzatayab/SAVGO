@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 export const Header = () => {
-  const token = localStorage.getItem("token")
-  
+  const token = localStorage.getItem("token");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
   return (
-    <div className="sticky top-0 z-50 bg-gray-800 shadow-md p-5">
-      <nav className="bg-gray-900 border-gray-700 rounded-lg">
+    <div className="fixed top-0 left-0 w-full bg-gray-800 z-50">
+      <nav className="bg-gray-900 border border-gray-700 backdrop-blur rounded-lg m-5 ">
         <div className="flex flex-wrap justify-between items-center max-w-screen-xl mx-auto px-4 py-3">
           {/* Logo Section */}
           <Link
@@ -29,7 +31,7 @@ export const Header = () => {
           </div>
 
           {token ? (
-            <div className="flex justify-end space-x-4 w-[176px]">
+            <div className="flex justify-end space-x-4 lg:w-[176px]">
               <Dropdown
                 className="bg-gray-700"
                 label={
@@ -62,21 +64,55 @@ export const Header = () => {
                   <Link to={"/logout"}>Sign out</Link>
                 </Dropdown.Item>
               </Dropdown>
+              {/* Mobile Menu Button */}
+              <div>
+                <button
+                  className="lg:hidden text-white bg-gray-700 p-2 rounded-lg"
+                  onClick={toggleDrawer}
+                >
+                  <i className="ri-menu-line text-2xl"></i>
+                </button>
+              </div>
             </div>
           ) : (
             <div>
               <h4 className="text-white">
-                <Link to={"/login"} className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Login</Link>
-                <Link to={"/register"} className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Sign Up</Link>
+                <Link
+                  to={"/login"}
+                  className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                >
+                  Login
+                </Link>
+                <Link
+                  to={"/register"}
+                  className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                >
+                  Sign Up
+                </Link>
               </h4>
             </div>
           )}
         </div>
       </nav>
 
-      {/* Mobile Menu */}
-      <div className="flex justify-center lg:hidden py-3">
-        <div className="flex space-x-2">
+      {/* Drawer */}
+      <div
+        className={`fixed top-0 left-0 h-screen w-64 bg-gray-900 dark:bg-gray-800 p-6 transform ${
+          drawerOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 z-40`}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h5 className="text-gray-500 dark:text-gray-200 font-semibold">
+            Menu
+          </h5>
+          <button
+            onClick={toggleDrawer}
+            className="text-gray-500 dark:text-gray-400"
+          >
+            <i className="ri-close-line text-2xl"></i>
+          </button>
+        </div>
+        <div className="flex flex-col space-y-4">
           <MenuButton label="Wishlist" icon="ri-heart-line" />
           <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
           <MenuButton label="Messages" icon="ri-chat-1-line" />

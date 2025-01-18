@@ -1,12 +1,13 @@
 import React from "react";
 import { Header } from "../Components/Header";
 import { Link } from "react-router-dom";
+import Footer from "../Components/Footer";
 
 const ProfilePage = () => {
   return (
     <>
     <Header/>
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 mt-28">
       {/* Profile Section */}
       <div className="bg-gray-700 shadow rounded-lg p-6 flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
         {/* User Info */}
@@ -33,7 +34,7 @@ const ProfilePage = () => {
         <div className="flex justify-center lg:justify-end">
           <Link
             to={"/upload"}
-            className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+            className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
           >
             Upload Image
           </Link>
@@ -110,43 +111,7 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 rounded-lg shadow m-4 dark:bg-gray-900">
-        <div className="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © 2025{" "}
-            <a href="/" className="hover:underline">
-              <strong>SNAPZY™</strong>
-            </a>
-            . All Rights Reserved.
-          </span>
-          <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
-            <li>
-              <a href="/company/about" className="hover:underline me-4 md:me-6">
-                About
-              </a>
-            </li>
-            <li>
-              <a
-                href="/company/policy"
-                className="hover:underline me-4 md:me-6"
-              >
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a href="/" className="hover:underline me-4 md:me-6">
-                Licensing
-              </a>
-            </li>
-            <li>
-              <a href="/" className="hover:underline">
-                Contact
-              </a>
-            </li>
-          </ul>
-        </div>
-      </footer>
+      <Footer></Footer>
     </div>
     </>
   );

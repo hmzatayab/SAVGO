@@ -21,7 +21,7 @@ function App() {
         <Route path="/upload" element={<UserProtectWrapper><UploadImage/></UserProtectWrapper>}/>
         <Route path="/profile" element={<UserProtectWrapper><ProfilePage/></UserProtectWrapper>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
-        <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
+        <Route path="/logout" element={<LogoutPage/>}/>
       </Routes>
     </div>
   )
