@@ -28,42 +28,6 @@ export const Header = () => {
             <MenuButton label="Messages" icon="ri-chat-1-line" />
           </div>
 
-          {/* Profile Section */}
-          {/* <div className="flex justify-end space-x-4 w-[176px]">
-            <Dropdown
-              className="bg-gray-700"
-              label={
-                <Avatar
-                  alt="User settings"
-                  img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                  rounded
-                />
-              }
-              arrowIcon={false}
-              inline
-            >
-              <Dropdown.Header className="text-white bg-gray-700">
-                <span className="block text-sm">Bonnie Green</span>
-                <span className="block truncate text-sm font-medium">
-                  name@flowbite.com
-                </span>
-              </Dropdown.Header>
-              <Dropdown.Item className="text-white hover:text-black">
-                <Link to={"/profile"}>Dashboard</Link>
-              </Dropdown.Item>
-              <Dropdown.Item className="text-white hover:text-black">
-                Settings
-              </Dropdown.Item>
-              <Dropdown.Item className="text-white hover:text-black">
-                Earnings
-              </Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item className="text-white hover:text-black">
-                <Link to={"/logout"}>Sign out</Link>
-              </Dropdown.Item>
-            </Dropdown>
-          </div> */}
-
           {token ? (
             <div className="flex justify-end space-x-4 w-[176px]">
               <Dropdown
@@ -102,7 +66,8 @@ export const Header = () => {
           ) : (
             <div>
               <h4 className="text-white">
-                <Link to={"/login"}>Please Login</Link>
+                <Link to={"/login"} className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Login</Link>
+                <Link to={"/register"} className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Sign Up</Link>
               </h4>
             </div>
           )}

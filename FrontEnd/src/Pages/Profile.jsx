@@ -1,5 +1,6 @@
 import React from "react";
 import { Header } from "../Components/Header";
+import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
   return (
@@ -18,13 +19,13 @@ const ProfilePage = () => {
           <div className="text-center lg:text-left">
             <h1 className="text-2xl font-bold text-white">User Name</h1>
             <p className="text-sm text-gray-400">user.email@example.com</p>
-            <a
-              href="/user/edit"
+            <Link
+              to={"/update"}
               title="Edit Profile"
               className="inline-block mt-2"
             >
               <i className="ri-edit-2-fill text-white"></i>
-            </a>
+            </Link>
           </div>
         </div>
 
