@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserDataContext } from "../context/UserContext";
+import PasswordStrengthMeter from "../Components/PasswordMeter";
 
 const RegisterPage = () => {
   const [username, setUsername] = React.useState("");
@@ -98,14 +99,16 @@ const RegisterPage = () => {
           />
 
           {/* Profile Image Input */}
-          <input
+          {/* <input
             type="text"
             value={Image}
             onChange={(e) => setImage(e.target.value)}
             placeholder="Enter your Profile Image URL"
             className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
             name="image"
-          />
+          /> */}
+          {/* <p className='text-red-500 font-semibold mt-2'>error</p> */}
+					<PasswordStrengthMeter password={password} />
 
           {/* Submit Button */}
           <input

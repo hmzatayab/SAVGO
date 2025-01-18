@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 function UploadImage() {
   const [imageFile, setImageFile] = useState(null);
@@ -69,9 +70,9 @@ function UploadImage() {
           SVG, PNG, or JPG (Ratio 9:16)
         </h6>
         <p className="text-blue-500 text-center">
-          <a href="/">
+          <Link to={"/"}>
             <strong>Go Back</strong>
-          </a>
+          </Link>
         </p>
       </div>
     </div>

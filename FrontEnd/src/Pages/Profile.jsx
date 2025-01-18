@@ -31,12 +31,12 @@ const ProfilePage = () => {
 
         {/* Settings Icon */}
         <div className="flex justify-center lg:justify-end">
-          <a
-            href="/profile/upload"
+          <Link
+            to={"/upload"}
             className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
           >
             Upload Image
-          </a>
+          </Link>
         </div>
       </div>
 

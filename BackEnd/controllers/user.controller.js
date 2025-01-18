@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import userModel from "../models/user.model.js";
 
 export const userRegister = async (req, res) => {
-  const { username, name, email, password, image } = req.body;
+  const { username, name, email, password } = req.body;
 
   try {
     if (!username || !name || !email || !password) {
@@ -23,7 +23,7 @@ export const userRegister = async (req, res) => {
       name,
       email,
       password: hashPassword,
-      image,
+      // image,
     });
 
     await user.save();

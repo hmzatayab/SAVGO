@@ -13,6 +13,7 @@
     "@remixicon/react": "^4.6.0",
     "axios": "^1.7.9",
     "flowbite-react": "^0.10.2",
+    "lucide-react": "^0.473.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1"

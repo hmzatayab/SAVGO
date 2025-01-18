@@ -12,7 +12,6 @@ const UpdatePage = () => {
 
   const navigate = useNavigate();
 
-  // Fetch Logged-In User Details
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -53,7 +52,6 @@ const UpdatePage = () => {
       );
 
       if (response.status === 200) {
-        alert("Profile updated successfully!");
         navigate("/");
       } else {
         throw new Error("Unexpected response format");
