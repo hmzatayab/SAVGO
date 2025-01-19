@@ -52,7 +52,7 @@ function UploadImage() {
           {/* Upload Image Input */}
           <input
             autocomplete="off"
-            className="mb-6 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            className="mb-6 block w-full text-sm text-gray-50 border border-gray-300 rounded-lg cursor-pointer bg-gray-700 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
             id="file_input"
             type="file"
             name="imageUpload"

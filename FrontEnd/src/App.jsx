@@ -9,6 +9,7 @@ import ProfilePage from "./Pages/Profile";
 import { LogoutPage } from "./Pages/Logout";
 import UserProtectWrapper from "./Pages/UserProtectWrapper";
 import UserRedirectWrapper from "./Pages/UserRedirectWrapper";
+import ChatPage from "./Pages/ChatRoom";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/profile" element={<UserProtectWrapper><ProfilePage/></UserProtectWrapper>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<LogoutPage/>}/>
+        <Route path="/chat" element={<UserProtectWrapper><ChatPage></ChatPage></UserProtectWrapper>}/>
       </Routes>
     </div>
   )

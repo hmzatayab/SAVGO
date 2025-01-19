@@ -27,13 +27,14 @@ export const Header = () => {
           <div className="hidden lg:flex space-x-4">
             <MenuButton label="Wishlist" icon="ri-heart-line" />
             <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
-            <MenuButton label="Messages" icon="ri-chat-1-line" />
+            <Link to={"/chat"}>
+              <MenuButton label="Messages" icon="ri-chat-1-line" />
+            </Link>
           </div>
 
           {token ? (
             <div className="flex justify-end space-x-4 lg:w-[176px]">
               <Dropdown
-                className="bg-gray-700"
                 label={
                   <Avatar
                     alt="User settings"
@@ -44,23 +45,19 @@ export const Header = () => {
                 arrowIcon={false}
                 inline
               >
-                <Dropdown.Header className="text-white bg-gray-700">
+                <Dropdown.Header>
                   <span className="block text-sm">Bonnie Green</span>
                   <span className="block truncate text-sm font-medium">
                     name@flowbite.com
                   </span>
                 </Dropdown.Header>
-                <Dropdown.Item className="text-white hover:text-black">
+                <Dropdown.Item>
                   <Link to={"/profile"}>Dashboard</Link>
                 </Dropdown.Item>
-                <Dropdown.Item className="text-white hover:text-black">
-                  Settings
-                </Dropdown.Item>
-                <Dropdown.Item className="text-white hover:text-black">
-                  Earnings
-                </Dropdown.Item>
+                <Dropdown.Item>Settings</Dropdown.Item>
+                <Dropdown.Item>Earnings</Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item className="text-white hover:text-black">
+                <Dropdown.Item>
                   <Link to={"/logout"}>Sign out</Link>
                 </Dropdown.Item>
               </Dropdown>
