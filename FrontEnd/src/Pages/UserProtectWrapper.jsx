@@ -3,7 +3,7 @@ import { UserDataContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-const UserProtectWrapper = ({
+export const UserProtectWrapper = ({
     children
 }) => {
     const token = localStorage.getItem('token')
@@ -46,4 +46,22 @@ const UserProtectWrapper = ({
     )
 }
 
-export default UserProtectWrapper
+export const UserRedirectWrapper = ({
+    children
+}) => {
+    const token = localStorage.getItem('token')
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (token) {
+            navigate('/')
+        }
+    }, [ token ])
+
+
+    return (
+        <>
+            {children}
+        </>
+    )
+}

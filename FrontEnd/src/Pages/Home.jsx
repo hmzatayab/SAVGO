@@ -1,17 +1,12 @@
-import React from "react";
-import { Header } from "../Components/Header";
-import Footer from "../Components/Footer";
+import React, { useContext } from "react";
+import { UserDataContext } from "../context/UserContext";
 import { Link } from "react-router-dom";
 
 function Home() {
   const token = localStorage.getItem("token");
-
+  
   return (
     <>
-      <div>
-        <Header />
-      </div>
-
       <div className="mt-28 p-5">
         {/* Upload */}
         {token ? (
@@ -182,7 +177,6 @@ function Home() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserDataContext } from "../context/UserContext";
 import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 export const Header = () => {
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem('user'));
+  
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -38,7 +41,7 @@ export const Header = () => {
                 label={
                   <Avatar
                     alt="User settings"
-                    img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                    img={user.image}
                     rounded
                   />
                 }
@@ -46,13 +49,13 @@ export const Header = () => {
                 inline
               >
                 <Dropdown.Header>
-                  <span className="block text-sm">Bonnie Green</span>
+                  <span className="block text-sm">{user.name}</span>
                   <span className="block truncate text-sm font-medium">
-                    name@flowbite.com
+                  {user.email}
                   </span>
                 </Dropdown.Header>
                 <Dropdown.Item>
-                  <Link to={"/profile"}>Dashboard</Link>
+                  <Link to={"/profile"}>Profile</Link>
                 </Dropdown.Item>
                 <Dropdown.Item>Settings</Dropdown.Item>
                 <Dropdown.Item>Earnings</Dropdown.Item>

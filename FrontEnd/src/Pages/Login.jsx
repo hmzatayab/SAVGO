@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { UserDataContext } from "../context/UserContext";
+import { UserDataContext } from "../context/UserContext.jsx";
 
 export const LoginPage = () => {
   const [username, setUsername] = useState(""); // State for username
@@ -28,9 +28,10 @@ export const LoginPage = () => {
       const response = await axios.post( `${import.meta.env.VITE_BASE_URL}/user/login`, userLogin, { withCredentials: true } );
       
       if (response.status === 200) {
-        const data = response.data
-        setUser(data.user)
+        const data = response.data  
+        setUser(data.user);
         localStorage.setItem('token', data.token)
+        // localStorage.setItem('user', JSON.stringify(data));
         navigate("/profile");
       }
     } catch (error) {

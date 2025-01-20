@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserDataContext } from "../context/UserContext";
+import { Loader } from "lucide-react";
 
 export const LogoutPage = () => {
   const { setUser } = useContext(UserDataContext);
@@ -31,10 +32,8 @@ export const LogoutPage = () => {
   }, [navigate, setUser]);
 
   return (
-    <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-white">Logging you out...</h1>
+    <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
       </div>
-    </div>
   );
 };
