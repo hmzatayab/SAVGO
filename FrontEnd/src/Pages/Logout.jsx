@@ -15,14 +15,11 @@ export const LogoutPage = () => {
           withCredentials: true,
         });
 
-        // Clear token from local storage
         localStorage.removeItem("token");
-
-        // Clear user data from context
-        setUser(null);
-
-        // Redirect to login page
+        localStorage.removeItem("user");
+        setUser(null); // Reset user context
         navigate("/");
+
       } catch (error) {
         console.error("Error during logout:", error);
       }
@@ -33,7 +30,7 @@ export const LogoutPage = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-        <Loader className="size-10 animate-spin" />
-      </div>
+      <Loader className="size-10 animate-spin" />
+    </div>
   );
 };

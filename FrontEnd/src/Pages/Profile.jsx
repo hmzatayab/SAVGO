@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { UserDataContext } from "../context/UserContext";
 
 const ProfilePage = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useContext(UserDataContext);
   return (
     <>
       <div className="p-8 space-y-8 mt-28">

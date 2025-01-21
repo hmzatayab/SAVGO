@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
+import { UserDataContext } from "../context/UserContext"
 
 export const Header = () => {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useContext(UserDataContext);
   
-
+  
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 

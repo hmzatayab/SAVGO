@@ -24,12 +24,6 @@ export const authenticate = async (req, res, next) => {
     req.user = { id: user._id, username: user.username }; // Attach user info to the request
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      console.error("JWT Error:", error.message);
-      return res
-        .status(403)
-        .json({ success: false, message: "Invalid or malformed token" });
-    }
     console.error("Authentication error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }

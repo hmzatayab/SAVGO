@@ -65,10 +65,19 @@ export const userLogin = async (req, res) => {
     });
 
     res.status(200).json({
+      success: true,
       token,
-      ...user._doc,
-      password: null,
+      user: {
+        _id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
     });
+    
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }

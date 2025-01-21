@@ -1,13 +1,8 @@
-import React, { useContext } from "react";
-import { UserDataContext } from "../context/UserContext";
+import React from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
   const token = localStorage.getItem("token");
-  const { user } = useContext(UserDataContext);
-
-  
-  
   return (
     <>
       <div className="mt-28 p-5">
