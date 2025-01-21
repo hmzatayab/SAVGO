@@ -7,7 +7,7 @@ export const LoginPage = () => {
   const [username, setUsername] = useState(""); // State for username
   const [password, setPassword] = useState(""); // State for password
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
-  const { user, setUser } = useContext(UserDataContext);
+  const { setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -31,14 +31,13 @@ export const LoginPage = () => {
         const data = response.data  
         setUser(data.user);
         localStorage.setItem('token', data.token)
-        // localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem('user', JSON.stringify(data));
         navigate("/profile");
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed");
     }
 
-    // Reset form fields
     setUsername("");
     setPassword("");
   };

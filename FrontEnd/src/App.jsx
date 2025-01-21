@@ -11,11 +11,12 @@ import ChatPage from "./Pages/ChatRoom";
 import { Header } from "./Components/Header";
 import Footer from "./Components/Footer";
 import { Loader } from "lucide-react";
+import Pricing from "./Pages/Pricing.jsx";
 
 
 function App() {
   const location = useLocation();
-  const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/upload"];
+  const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/upload", "/pricing"];
 
   if (false)
     return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
         <Route path="/chat" element={<UserProtectWrapper><ChatPage/></UserProtectWrapper>}/>
+        <Route path="/pricing" element={<Pricing/>}/>
       </Routes>
       {!hideHeaderPaths.includes(location.pathname) && <Footer/>}
     </div>

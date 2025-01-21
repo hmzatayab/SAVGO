@@ -95,7 +95,6 @@ export const userUpdate = async (req, res) => {
   }
 };
 
-
 export const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user.id).select("-password"); // Exclude password from response
@@ -111,11 +110,3 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-export const checkAuth = (req, res) => {
-  try {
-    res.status(200).json(req.user);
-  } catch (error) {
-    console.log("Error in checkAuth controller", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};

@@ -13,7 +13,7 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
 
-  const { user, setUser } = useContext(UserDataContext);
+  const { user } = useContext(UserDataContext);
 
   const handleRegister = async (e) => {
     e.preventDefault();

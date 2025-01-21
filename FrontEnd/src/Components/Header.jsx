@@ -1,5 +1,4 @@
-import React, { useState, useContext } from "react";
-import { UserDataContext } from "../context/UserContext";
+import React, { useState } from "react";
 import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
 
@@ -7,6 +6,7 @@ export const Header = () => {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem('user'));
   
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -29,7 +29,7 @@ export const Header = () => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-4">
             <MenuButton label="Wishlist" icon="ri-heart-line" />
-            <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
+            <Link to={"/pricing"}><MenuButton label="Pricing" icon="ri-price-tag-3-line" /></Link>
             <Link to={"/chat"}>
               <MenuButton label="Messages" icon="ri-chat-1-line" />
             </Link>
@@ -38,20 +38,14 @@ export const Header = () => {
           {token ? (
             <div className="flex justify-end space-x-4 lg:w-[176px]">
               <Dropdown
-                label={
-                  <Avatar
-                    alt="User settings"
-                    img={user.image}
-                    rounded
-                  />
-                }
+                label={<Avatar alt="User settings" img={user.image} rounded />}
                 arrowIcon={false}
                 inline
               >
                 <Dropdown.Header>
                   <span className="block text-sm">{user.name}</span>
                   <span className="block truncate text-sm font-medium">
-                  {user.email}
+                    {user.email}
                   </span>
                 </Dropdown.Header>
                 <Dropdown.Item>

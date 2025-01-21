@@ -1,12 +1,8 @@
-import React, { useContext } from "react";
-import { UserDataContext } from "../context/UserContext.jsx";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
-  // const user = JSON.parse(localStorage.getItem('user'));
-  const { user } = useContext(UserDataContext);
-  const data = user;
-
+  const user = JSON.parse(localStorage.getItem('user'));
   return (
     <>
       <div className="p-8 space-y-8 mt-28">
@@ -18,7 +14,7 @@ const ProfilePage = () => {
               {/* Gradient Border */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full p-1">
                 <img
-                  src={data.user.image}
+                  src={user.image}
                   alt="User Profile"
                   className="w-full h-full rounded-full object-cover bg-gray-700 shadow-lg"
                 />
@@ -29,12 +25,11 @@ const ProfilePage = () => {
                 <i className="ri-camera-line text-white text-2xl"></i>
               </div>
             </div>
-
             <div className="text-center lg:text-left">
               <h1 className="text-2xl font-bold text-white">
-                {data.user.name}
+                {user.name}
               </h1>
-              <p className="text-sm text-gray-400">{data.user.email}</p>
+              <p className="text-sm text-gray-400">{user.email}</p>
               <Link
                 to={"/update"}
                 title="Edit Profile"
