@@ -10,5 +10,4 @@ router.post('/follow', authenticate, followUser);
 router.get('/:userId/followers', getUserFollowers);
 router.get('/:userId/following', getUserFollowing);
 
-
 export default router;

@@ -1,9 +1,30 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
+import { Loader } from "lucide-react";
 
 const ProfilePage = () => {
+  const token = localStorage.getItem("token");
   const { user } = useContext(UserDataContext);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const getPosts = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/user/posts`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await response.json();
+        setPosts(data.post.posts);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error Get posts:", error);
+        setLoading(false);
+      }
+    };
+    getPosts();
+  }, []);
   return (
     <>
       <div className="p-8 space-y-8 mt-28">
@@ -27,9 +48,7 @@ const ProfilePage = () => {
               </div>
             </div>
             <div className="text-center lg:text-left">
-              <h1 className="text-2xl font-bold text-white">
-                {user.name}
-              </h1>
+              <h1 className="text-2xl font-bold text-white">{user.name}</h1>
               <p className="text-sm text-gray-400">{user.email}</p>
               <Link
                 to={"/update"}
@@ -71,55 +90,69 @@ const ProfilePage = () => {
         {/* User Posts Section */}
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Your Post's</h2>
-          <div
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            style={{ columnFill: "auto" }}
-          >
-            {[1, 2, 3, 4].map((post, index) => (
-              <div
-                key={index}
-                className="break-inside-avoid bg-gray-800 hover:bg-gray-900 shadow-lg rounded-lg overflow-hidden h-fit p-4"
-              >
-                {/* Post Image */}
-                <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
-                  <img
-                    className="absolute top-0 left-0 w-full h-full object-cover"
-                    src="https://images.unsplash.com/photo-1736209359163-d61a35fc5640?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3fHx8ZW58MHx8fHx8"
-                    alt="Post Image"
-                  />
-                </div>
-
-                {/* User Details & Actions */}
-                <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
-                  {/* User Profile */}
-                  <div className="flex items-center space-x-4">
+          {loading ? (
+            <div className="flex items-center justify-center h-screen">
+              <Loader className="size-10 animate-spin" />
+            </div>
+          ) : posts.length === 0 ? (
+            <p className="text-gray-400">No posts available.</p>
+          ) : (
+            <div
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              style={{ columnFill: "auto" }}
+            >
+              {posts.map((post, index) => (
+                <div
+                  key={index}
+                  className="break-inside-avoid bg-gray-800 hover:bg-gray-900 shadow-lg rounded-lg overflow-hidden h-fit p-4"
+                >
+                  {/* Post Image */}
+                  <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
                     <img
-                      className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
-                      src="https://upload.wikimedia.org/wikipedia/en/f/f2/Robert_Downey_Jr._as_Tony_Stark_in_Avengers_Infinity_War.jpg"
-                      alt="User Profile"
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                      key={post._id}
+                      src={post.imageURL}
+                      alt="Post Image"
                     />
-                    <div>
-                      <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
-                        User Name
-                      </h3>
-                      <p className="text-gray-400 text-xs sm:text-sm">
-                        @username
-                      </p>
-                    </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
-                    <div className="flex items-center space-x-2 text-gray-400">
-                      <i className="ri-heart-line ri-lg sm:ri-xl cursor-pointer"></i>
-                      <span className="text-sm sm:text-base">12</span>
+                  {/* User Details & Actions */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
+                    {/* User Profile */}
+                    <div className="flex items-center space-x-4">
+                      <img
+                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                        src={user.image}
+                        alt="User Profile"
+                      />
+                      <div>
+                        <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
+                          {user.name.length > 5
+                            ? user.name.slice(0, 5) + "..."
+                            : user.name}
+                        </h3>
+                        <p className="text-gray-400 text-xs sm:text-sm">
+                          @
+                          {user.username.length > 5
+                            ? user.username.slice(0, 5) + "..."
+                            : user.username}
+                        </p>
+                      </div>
                     </div>
-                    <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
+                      <div className="flex items-center space-x-2 text-gray-400">
+                        <i className="ri-heart-line ri-lg sm:ri-xl cursor-pointer"></i>
+                        <span className="text-sm sm:text-base">12</span>
+                      </div>
+                      <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </>

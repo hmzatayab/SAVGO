@@ -1,5 +1,5 @@
 import express from "express";
-import { userRegister, userLogin, userUpdate, getUserProfile } from "../controllers/user.controller.js";
+import { userRegister, userLogin, userUpdate, getUserProfile, getAllUser, getUserAllPost, userLogout, getAllpost } from "../controllers/user.controller.js";
 import { authenticate } from "../Middleware/auth.middleware.js";
 
 const router = express();
@@ -8,9 +8,8 @@ router.post("/register", userRegister);
 router.post("/login", userLogin);
 router.post("/update", authenticate, userUpdate);
 router.get("/profile", authenticate, getUserProfile);
-router.get("/logout", (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logged out" });
-});
-
+router.get("/users", authenticate, getAllUser)
+router.get("/posts", authenticate, getUserAllPost)
+router.get("/all-posts", getAllpost)
+router.get("/logout", userLogout);
 export default router;
