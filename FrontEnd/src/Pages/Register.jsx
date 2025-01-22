@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { toast } from "react-toastify";
 import { UserDataContext } from "../context/UserContext";
+import axios from "axios";
 import PasswordStrengthMeter from "../Components/PasswordMeter";
 
 const RegisterPage = () => {
@@ -34,7 +35,8 @@ const RegisterPage = () => {
 
       if (response.status === 201) {
         console.log("User registered:", response.data);
-        navigate("/login");
+        toast.success("User Register Successfully!");
+        navigate("/");
         console.log(user);
       } else {
         throw new Error("Unexpected response format");
@@ -55,7 +57,7 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-      <div className="max-w-md w-full bg-gray-900 text-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-md w-full lg:bg-gray-900 text-white p-8 rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Create User</h1>
         <form onSubmit={handleRegister} className="space-y-4">
           {/* Username Input */}
@@ -63,8 +65,8 @@ const RegisterPage = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your Username"
-            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            placeholder="Username"
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
             name="username"
           />
 
@@ -73,8 +75,8 @@ const RegisterPage = () => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your Name"
-            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            placeholder="Full Name"
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
             name="name"
           />
 
@@ -83,8 +85,8 @@ const RegisterPage = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter Your Email"
-            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            placeholder="example@gmail.com"
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
             name="email"
           />
 
@@ -93,8 +95,8 @@ const RegisterPage = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your Password"
-            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            placeholder="Password"
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
             name="password"
           />
 

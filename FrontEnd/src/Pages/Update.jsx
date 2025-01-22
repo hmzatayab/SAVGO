@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 const UpdatePage = () => {
@@ -28,7 +29,7 @@ const UpdatePage = () => {
         setEmail(user.email);
         setImage(user.image);
       } catch (err) {
-        console.error("Error fetching user details:", err.message);
+        toast.error(`Error fetching user details: ${err.message}`);
         setError("Failed to load user details. Please try again.");
       }
     };
@@ -52,12 +53,13 @@ const UpdatePage = () => {
       );
 
       if (response.status === 200) {
+        toast.success("User Updated successfully!");
         navigate("/");
       } else {
-        throw new Error("Unexpected response format");
+        toast.error("Unexpected response format");
       }
     } catch (err) {
-      console.error("Update error:", err.message);
+      toast.error(`Update error: ${err.message}`);
       setError("An error occurred while updating. Please try again.");
     } finally {
       setLoading(false);

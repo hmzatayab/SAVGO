@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { UserDataContext } from "../context/UserContext";
 import { Loader } from "lucide-react";
 
@@ -17,11 +18,12 @@ export const LogoutPage = () => {
 
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        setUser(null); // Reset user context
+        setUser(null);
+        toast.success("Logout successfully!");
         navigate("/");
 
       } catch (error) {
-        console.error("Error during logout:", error);
+        toast.error(`Error during logout: ${error}`);
       }
     };
 

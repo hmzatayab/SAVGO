@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
@@ -37,8 +38,8 @@ export const LoginPage = () => {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
-
-        navigate("/profile");
+        toast.success("Logged In Successfully!");
+        navigate("/");
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed");
@@ -50,7 +51,7 @@ export const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-      <div className="max-w-md w-full bg-gray-900 text-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-md w-full lg:bg-gray-900 text-white p-8 rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Login User</h1>
 
         <form onSubmit={handleLogin} className="space-y-4 mb-4">
@@ -59,8 +60,8 @@ export const LoginPage = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your Username"
-            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            placeholder="Username"
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
           />
 
           {/* Password Input */}
@@ -68,8 +69,8 @@ export const LoginPage = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your Password"
-            className="w-full px-4 py-2 bg-zinc-700 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
+            placeholder="Password"
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
           />
 
           {/* Submit Button */}

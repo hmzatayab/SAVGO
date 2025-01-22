@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function UploadImage() {
+  const Navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -11,8 +14,10 @@ function UploadImage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const token = localStorage.getItem("token");
+
     if (!imageFile) {
-      alert("Please upload an image file!");
+      toast.error("Please upload an image file!");
       return;
     }
 
@@ -20,19 +25,27 @@ function UploadImage() {
     formData.append("imageUpload", imageFile);
 
     try {
-      const response = await fetch("/profile/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/profile/upload`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token here
+          },
+        }
+      );
 
       if (response.ok) {
-        alert("Image uploaded successfully!");
+        toast.success("Image uploaded successfully!");
+        Navigate("/")
       } else {
-        alert("Failed to upload image.");
+        const errorData = await response.json();
+        toast.error(`Failed to upload image: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("An error occurred while uploading the image.");
+      toast.error("An error occurred while uploading the image.");
     }
 
     // Reset the file input
@@ -51,8 +64,8 @@ function UploadImage() {
         >
           {/* Upload Image Input */}
           <input
-            autocomplete="off"
-            className="mb-6 block w-full text-sm text-gray-50 border border-gray-300 rounded-lg cursor-pointer bg-gray-700 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            autoComplete="off"
+            className="mb-6 block w-full text-sm text-gray-50 border border-gray-300 rounded-lg cursor-pointer bg-gray-700 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
             id="file_input"
             type="file"
             name="imageUpload"
