@@ -1,5 +1,7 @@
 import userModel from "../models/user.model.js";
 import postModel from "../models/post.model.js";
+import mongoose from 'mongoose';
+
 
 export const imageUpload = async (req, res) => {
   try {
@@ -90,5 +92,41 @@ export const getUserFollowing = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "An error occurred." });
+  }
+};
+
+export const likePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate the ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid post ID" });
+    }
+
+    // Get user
+    const user = await userModel.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Find post
+    const post = await postModel.findById(id);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Add like logic (example)
+    if (!post.likes.includes(user._id)) {
+      post.likes.push(user._id);
+    } else {
+      post.likes = post.likes.filter((like) => !like.equals(user._id));
+    }
+
+    await post.save();
+    res.status(200).json({ message: "Post liked/unliked successfully", post });
+  } catch (error) {
+    console.error("Error liking post:", error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 };

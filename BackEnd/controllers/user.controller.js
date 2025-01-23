@@ -164,3 +164,4 @@ export const getUserAllPost = async (req, res) => {
 
   res.status(200).json({ success: true, post });
 };
+

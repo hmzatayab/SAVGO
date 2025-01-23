@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -128,9 +128,9 @@ const UpdatePage = () => {
         </form>
 
         <h6 className="my-6 text-center">
-          <Link to="/" className="text-blue-500 font-bold hover:underline">
+          <button to="/" onClick={() => navigate(-1)} className="text-blue-500 font-bold hover:underline">
             Go Back
-          </Link>
+          </button>
         </h6>
       </div>
     </div>

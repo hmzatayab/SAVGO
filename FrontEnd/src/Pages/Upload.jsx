@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import NotificationBar from "../Components/Notification";
+
 
 function UploadImage() {
   const Navigate = useNavigate();
   const [imageFile, setImageFile] = useState(null);
+  const [notification, setNotification] = useState({
+    visible: false,
+    message: "",
+    imageUrl: "",
+  });
 
   const handleFileChange = (e) => {
     setImageFile(e.target.files[0]);
@@ -37,11 +43,23 @@ function UploadImage() {
       );
 
       if (response.ok) {
-        toast.success("Image uploaded successfully!");
-        Navigate("/")
+        // toast.success("Image uploaded successfully!");
+        setNotification({
+          visible: true,
+          message: "Image uploaded successfully!",
+          imageUrl: "", // Assuming backend returns filename
+        });
+        setTimeout(() => {
+          Navigate("/");
+        }, 1000);
       } else {
         const errorData = await response.json();
-        toast.error(`Failed to upload image: ${errorData.message}`);
+        // toast.error(`Failed to upload image: ${errorData.message}`);
+        setNotification({
+          visible: true,
+          message: `Failed to upload image: ${errorData.message}`,
+          imageUrl: "",
+        });
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -53,9 +71,13 @@ function UploadImage() {
     e.target.reset();
   };
 
+  const handleCloseNotification = () => {
+    setNotification({ ...notification, visible: false });
+  };
+
   return (
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-      <div className="max-w-md w-full bg-gray-900 text-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-md w-full lg:bg-gray-900 sm:bg-gray-800 text-white p-8 rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Upload Image</h1>
         <form
           onSubmit={handleSubmit}
@@ -83,11 +105,22 @@ function UploadImage() {
           SVG, PNG, or JPG (Ratio 9:16)
         </h6>
         <p className="text-blue-500 text-center">
-          <Link to={"/"}>
+          <button onClick={() => Navigate(-1)}>
             <strong>Go Back</strong>
-          </Link>
+          </button>
         </p>
       </div>
+
+    {/* NotificationBar */}
+    {notification.visible && (
+        <NotificationBar
+          message={notification.message}
+          imageUrl={notification.imageUrl}
+          onClose={handleCloseNotification}
+        />
+      )}
+
+
     </div>
   );
 }

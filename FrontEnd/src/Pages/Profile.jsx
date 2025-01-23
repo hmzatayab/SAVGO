@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 import { Loader } from "lucide-react";
+import Skeleton from "../Components/Skeleton";
 
 const ProfilePage = () => {
   const token = localStorage.getItem("token");
@@ -52,6 +53,7 @@ const ProfilePage = () => {
               <p className="text-sm text-gray-400">{user.email}</p>
               <Link
                 to={"/update"}
+                state={{ from: "profile" }}
                 title="Edit Profile"
                 className="inline-block mt-2"
               >
@@ -64,6 +66,7 @@ const ProfilePage = () => {
           <div className="flex justify-center lg:justify-end">
             <Link
               to={"/upload"}
+              state={{ from: "profile" }}
               className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
             >
               Upload Image
@@ -91,9 +94,7 @@ const ProfilePage = () => {
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Your Post's</h2>
           {loading ? (
-            <div className="flex items-center justify-center h-screen">
-              <Loader className="size-10 animate-spin" />
-            </div>
+            <Skeleton/>
           ) : posts.length === 0 ? (
             <p className="text-gray-400">No posts available.</p>
           ) : (
@@ -104,7 +105,7 @@ const ProfilePage = () => {
               {posts.map((post, index) => (
                 <div
                   key={index}
-                  className="break-inside-avoid bg-gray-800 hover:bg-gray-900 shadow-lg rounded-lg overflow-hidden h-fit p-4"
+                  className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4"
                 >
                   {/* Post Image */}
                   <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
@@ -144,7 +145,7 @@ const ProfilePage = () => {
                     <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
                       <div className="flex items-center space-x-2 text-gray-400">
                         <i className="ri-heart-line ri-lg sm:ri-xl cursor-pointer"></i>
-                        <span className="text-sm sm:text-base">12</span>
+                        <span className="text-sm sm:text-base">{post.likes.length}</span>
                       </div>
                       <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
                     </div>

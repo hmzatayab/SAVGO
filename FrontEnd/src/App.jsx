@@ -30,7 +30,7 @@ function App() {
     <div>
       <ToastContainer position="top-right" autoClose={3000} />
       {!hideHeaderPaths.includes(location.pathname) && <Header />}
-      <Routes>
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home/>}/>
         <Route path="/login" element={<UserRedirectWrapper><LoginPage/></UserRedirectWrapper>}/>
         <Route path="/register" element={<RegisterPage/>}/>
