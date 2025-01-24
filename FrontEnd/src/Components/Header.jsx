@@ -1,13 +1,12 @@
 import React, { useState, useContext } from "react";
 import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
-import { UserDataContext } from "../context/UserContext"
+import { UserDataContext } from "../context/UserContext";
 
 export const Header = () => {
   const token = localStorage.getItem("token");
   const { user } = useContext(UserDataContext);
-  
-  
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -30,7 +29,9 @@ export const Header = () => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-4">
             <MenuButton label="Wishlist" icon="ri-heart-line" />
-            <Link to={"/pricing"}><MenuButton label="Pricing" icon="ri-price-tag-3-line" /></Link>
+            <Link to={"/pricing"}>
+              <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
+            </Link>
             <Link to={"/chat"}>
               <MenuButton label="Messages" icon="ri-chat-1-line" />
             </Link>
@@ -43,10 +44,16 @@ export const Header = () => {
                 arrowIcon={false}
                 inline
               >
-                <Dropdown.Header>
-                  <span className="block text-sm">{user.name}</span>
-                  <span className="block truncate text-sm font-medium">
-                    {user.email}
+                <Dropdown.Header className="w-40">
+                  <span className="block text-base font-bold">
+                    {user.name.length > 5
+                      ? user.name.slice(0, 5) + "..."
+                      : user.name}
+                  </span>
+                  <span className="block truncate text-sm font-normal italic">
+                    @{user.username.length > 15
+                      ? user.username.slice(0, 15) + "..."
+                      : user.username}
                   </span>
                 </Dropdown.Header>
                 <Dropdown.Item>

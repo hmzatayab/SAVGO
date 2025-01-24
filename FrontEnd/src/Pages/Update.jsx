@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import AnimationWrapper from "../Components/Animations";
 
 const UpdatePage = () => {
   const [username, setUsername] = useState("");
@@ -67,6 +68,7 @@ const UpdatePage = () => {
   };
 
   return (
+    <AnimationWrapper initial={{ opacity: 0, scale: 0.5,}} exit={{ opacity: 0, scale: 0.5,}}>
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
       <div className="max-w-md w-full bg-gray-900 text-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Update User</h1>
@@ -134,6 +136,7 @@ const UpdatePage = () => {
         </h6>
       </div>
     </div>
+    </AnimationWrapper>
   );
 };
 

@@ -1,7 +1,6 @@
 import userModel from "../models/user.model.js";
 import postModel from "../models/post.model.js";
-import mongoose from 'mongoose';
-
+import mongoose from "mongoose";
 
 export const imageUpload = async (req, res) => {
   try {
@@ -96,37 +95,56 @@ export const getUserFollowing = async (req, res) => {
 };
 
 export const likePost = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Validate the ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: "Invalid post ID" });
+    try {
+      const { id } = req.params;
+  
+      // Validate post ID
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid post ID" });
+      }
+  
+      const userId = req.user.id;
+      const user = await userModel.findById(userId).select("-password");
+  
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      const post = await postModel.findById(id);
+      if (!post) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+  
+      // Find the index of user ID in the likes array
+      const userIndex = post.likes.indexOf(user._id);
+  
+      if (userIndex === -1) {
+        // If user ID is not found, add it (like)
+        post.likes.push(user._id);
+      } else {
+        // If user ID is found, remove it (unlike)
+        post.likes.splice(userIndex, 1);
+      }
+  
+      await post.save();
+  
+      const isLikedByCurrentUser = post.likes.includes(user._id);
+  
+      // Respond with updated data
+      res.status(200).json({
+        message: "Post liked/unliked successfully",
+        post: {
+          _id: post._id,
+          postData: post.postData,
+          user: post.user,
+          likes: post.likes,
+          isLikedByCurrentUser,
+          date: post.date,
+        },
+      });
+    } catch (error) {
+      console.error("Error liking post:", error);
+      res.status(500).json({ error: "Something went wrong" });
     }
-
-    // Get user
-    const user = await userModel.findById(req.user.id).select("-password");
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Find post
-    const post = await postModel.findById(id);
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
-    // Add like logic (example)
-    if (!post.likes.includes(user._id)) {
-      post.likes.push(user._id);
-    } else {
-      post.likes = post.likes.filter((like) => !like.equals(user._id));
-    }
-
-    await post.save();
-    res.status(200).json({ message: "Post liked/unliked successfully", post });
-  } catch (error) {
-    console.error("Error liking post:", error);
-    res.status(500).json({ error: "Something went wrong" });
-  }
-};
+  };
+  

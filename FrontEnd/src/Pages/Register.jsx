@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
 import PasswordStrengthMeter from "../Components/PasswordMeter";
+import AnimationWrapper from "../Components/Animations";
 
 const RegisterPage = () => {
   const [username, setUsername] = React.useState("");
@@ -56,6 +57,7 @@ const RegisterPage = () => {
   };
 
   return (
+    <AnimationWrapper initial={{ opacity: 0, scale: 0.5,}}>
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
       <div className="max-w-md w-full lg:bg-gray-900 text-white p-8 rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Create User</h1>
@@ -137,6 +139,7 @@ const RegisterPage = () => {
         </h6>
       </div>
     </div>
+    </AnimationWrapper>
   );
 };
 

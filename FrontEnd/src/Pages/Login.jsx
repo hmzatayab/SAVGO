@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
+import AnimationWrapper from "../Components/Animations";
 
 export const LoginPage = () => {
   const [username, setUsername] = useState(""); // State for username
@@ -38,7 +39,7 @@ export const LoginPage = () => {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
-        toast.success("Logged In Successfully!");
+        // toast.success("Logged In Successfully!");
         navigate("/");
       }
     } catch (error) {
@@ -50,6 +51,7 @@ export const LoginPage = () => {
   };
 
   return (
+    <AnimationWrapper initial={{ opacity: 0, scale: 0.5,}} exit={{ opacity: 0, scale: 0.5,}}>
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
       <div className="max-w-md w-full lg:bg-gray-900 text-white p-8 rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Login User</h1>
@@ -116,5 +118,6 @@ export const LoginPage = () => {
         </p>
       </div>
     </div>
+    </AnimationWrapper>
   );
 };

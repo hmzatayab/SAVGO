@@ -1,9 +1,10 @@
 import React from "react";
 
-function Skeleton() {
+function Skeleton(props) {
+  const length = props.length
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {Array.from({ length: 8 }).map((_, index) => (
+      {Array.from({ length }).map((_, index) => (
         <div
           key={index}
           className="bg-gray-800 animate-pulse shadow-lg rounded-lg overflow-hidden h-fit p-4"

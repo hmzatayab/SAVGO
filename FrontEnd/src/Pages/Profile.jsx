@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 import { Loader } from "lucide-react";
 import Skeleton from "../Components/Skeleton";
+import LikeButton from "../Components/LikeButton";
 
 const ProfilePage = () => {
   const token = localStorage.getItem("token");
@@ -49,16 +50,36 @@ const ProfilePage = () => {
               </div>
             </div>
             <div className="text-center lg:text-left">
-              <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-              <p className="text-sm text-gray-400">{user.email}</p>
+              <div className="flex items-center">
+              <h1 className="text-3xl font-bold text-white">{user.name}</h1>
               <Link
                 to={"/update"}
                 state={{ from: "profile" }}
                 title="Edit Profile"
-                className="inline-block mt-2"
+                className="inline-block ml-3"
               >
                 <i className="ri-edit-2-fill text-white"></i>
               </Link>
+              </div>
+              <div className="flex items-center">
+                <i class="ri-mail-line text-white mr-2"></i>
+                <p className="text-sm text-gray-400 italic">{user.email}</p>
+              </div>
+              {/* <p className="text-sm text-gray-400">
+                {(() => {
+                  const [username, domain] = user.email.split("@");
+                  const hiddenUsername =
+                    username[0] +
+                    "*".repeat(username.length - 2) +
+                    username[username.length - 1];
+                  const hiddenDomain =
+                    domain[0] +
+                    "*".repeat(domain.indexOf(".")) +
+                    domain.slice(domain.indexOf("."));
+                  return `${hiddenUsername}@${hiddenDomain}`;
+                })()}
+              </p> */}
+
             </div>
           </div>
 
@@ -94,7 +115,7 @@ const ProfilePage = () => {
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Your Post's</h2>
           {loading ? (
-            <Skeleton/>
+            <Skeleton />
           ) : posts.length === 0 ? (
             <p className="text-gray-400">No posts available.</p>
           ) : (
@@ -105,7 +126,7 @@ const ProfilePage = () => {
               {posts.map((post, index) => (
                 <div
                   key={index}
-                  className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4"
+                  className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4 transition duration-500"
                 >
                   {/* Post Image */}
                   <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
@@ -132,10 +153,10 @@ const ProfilePage = () => {
                             ? user.name.slice(0, 5) + "..."
                             : user.name}
                         </h3>
-                        <p className="text-gray-400 text-xs sm:text-sm">
+                        <p className="text-gray-400 text-xs sm:text-sm italic">
                           @
-                          {user.username.length > 5
-                            ? user.username.slice(0, 5) + "..."
+                          {user.username.length > 10
+                            ? user.username.slice(0, 10) + "..."
                             : user.username}
                         </p>
                       </div>
@@ -144,8 +165,11 @@ const ProfilePage = () => {
                     {/* Actions */}
                     <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
                       <div className="flex items-center space-x-2 text-gray-400">
-                        <i className="ri-heart-line ri-lg sm:ri-xl cursor-pointer"></i>
-                        <span className="text-sm sm:text-base">{post.likes.length}</span>
+                        <LikeButton
+                          postId={post._id}
+                          initialLikes={post.likes.length}
+                          isInitiallyLiked={post.likes.includes(post.user)} // Pass logged-in user ID
+                        />
                       </div>
                       <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
                     </div>

@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     image: {
       type: String,
+      default: ""
     },
     posts: [
       {
@@ -29,10 +30,6 @@ const userSchema = new mongoose.Schema(
         ref: "post",
       },
     ],
-    likes: {
-      type: Number,
-      default: 0,
-    },
     followers: [
       {
         type: mongoose.Schema.Types.ObjectId,

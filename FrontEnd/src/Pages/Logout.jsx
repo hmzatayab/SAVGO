@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { UserDataContext } from "../context/UserContext";
 import { Loader } from "lucide-react";
+import AnimationWrapper from "../Components/Animations";
 
 export const LogoutPage = () => {
   const { setUser } = useContext(UserDataContext);
@@ -31,8 +32,10 @@ export const LogoutPage = () => {
   }, [navigate, setUser]);
 
   return (
+    <AnimationWrapper>
     <div className="flex items-center justify-center h-screen">
       <Loader className="size-10 animate-spin" />
     </div>
+    </AnimationWrapper>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import NotificationBar from "../Components/Notification";
+import AnimationWrapper from "../Components/Animations";
 
 
 function UploadImage() {
@@ -76,6 +77,7 @@ function UploadImage() {
   };
 
   return (
+    <AnimationWrapper initial={{ opacity: 0, scale: 0.5,}} exit={{ opacity: 0, scale: 0.5,}}>
     <div className="min-h-screen bg-gray-800 flex items-center justify-center">
       <div className="max-w-md w-full lg:bg-gray-900 sm:bg-gray-800 text-white p-8 rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Upload Image</h1>
@@ -122,6 +124,7 @@ function UploadImage() {
 
 
     </div>
+    </AnimationWrapper>
   );
 }
 
