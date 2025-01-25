@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNotification } from "../context/NotificationContext";
 import { useNavigate } from "react-router-dom";
 
 const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
@@ -8,6 +9,7 @@ const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
   // States
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(isInitiallyLiked);
+  const { showNotification } = useNotification();
 
   // Check if the user is authenticated
   const isAuthenticated = localStorage.getItem("token");
@@ -63,7 +65,7 @@ const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
       ) : (
         <i
           className="ri-heart-line ri-lg sm:ri-xl cursor-pointer text-gray-400"
-          onClick={() => navigate("/login")}
+          onClick={() => showNotification("Please Logged In First")}
         ></i>
       )}
       <span className="text-sm sm:text-base">{likes}</span>

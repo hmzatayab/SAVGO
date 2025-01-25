@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useNotification } from "../context/NotificationContext";
 import { UserDataContext } from "../context/UserContext";
 import { Loader } from "lucide-react";
 import AnimationWrapper from "../Components/Animations";
@@ -9,6 +9,7 @@ import AnimationWrapper from "../Components/Animations";
 export const LogoutPage = () => {
   const { setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     const handleLogout = async () => {
@@ -20,11 +21,13 @@ export const LogoutPage = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setUser(null);
-        toast.success("Logout successfully!");
+        setTimeout(() => {
+          showNotification("Logout successfully!");
+        }, 1000);
         navigate("/");
 
       } catch (error) {
-        toast.error(`Error during logout: ${error}`);
+        showNotification(`Error during logout: ${error}`);
       }
     };
 

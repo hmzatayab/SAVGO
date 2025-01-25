@@ -134,13 +134,14 @@ export const getAllpost = async (req, res) => {
     const allPosts = [];
 
     users.forEach(user => {
+      
       user.posts.forEach(post => {
         post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${post.postData}`;
         post.userData = {
           name: user.name,
           username: user.username,
           email: user.email,
-          image: user.image
+          image: user.image,
         };
         allPosts.push(post); // Collect each post
       });

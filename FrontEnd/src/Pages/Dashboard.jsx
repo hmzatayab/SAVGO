@@ -1,15 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
-import { Loader } from "lucide-react";
 import Skeleton from "../Components/Skeleton";
 import LikeButton from "../Components/LikeButton";
+import { userFollow } from "../store/Profile.store";
 
 const ProfilePage = () => {
   const token = localStorage.getItem("token");
   const { user } = useContext(UserDataContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  console.log(userFollow);
+  
   useEffect(() => {
     const getPosts = async () => {
       try {
@@ -54,7 +56,7 @@ const ProfilePage = () => {
               <h1 className="text-3xl font-bold text-white">{user.name}</h1>
               <Link
                 to={"/update"}
-                state={{ from: "profile" }}
+                state={{ from: "dashboard" }}
                 title="Edit Profile"
                 className="inline-block ml-3"
               >
@@ -87,7 +89,7 @@ const ProfilePage = () => {
           <div className="flex justify-center lg:justify-end">
             <Link
               to={"/upload"}
-              state={{ from: "profile" }}
+              state={{ from: "dashboard" }}
               className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
             >
               Upload Image

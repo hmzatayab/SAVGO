@@ -27,7 +27,7 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex space-x-4">
+          <div className="hidden lg:flex space-x-4 ">
             <MenuButton label="Wishlist" icon="ri-heart-line" />
             <Link to={"/pricing"}>
               <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
@@ -57,7 +57,7 @@ export const Header = () => {
                   </span>
                 </Dropdown.Header>
                 <Dropdown.Item>
-                  <Link to={"/profile"}>Profile</Link>
+                  <Link to={"/dashboard"}>Profile</Link>
                 </Dropdown.Item>
                 <Dropdown.Item>Settings</Dropdown.Item>
                 <Dropdown.Item>Earnings</Dropdown.Item>
