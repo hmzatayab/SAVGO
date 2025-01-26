@@ -20,39 +20,47 @@ export const imageUpload = async (req, res) => {
 };
 
 export const followUser = async (req, res) => {
-  try {
-    const { targetId } = req.body;
+  const { userId, targetId } = req.body;
 
-    // Validation: Ensure both users exist
-    const user = await userModel.findById(req.user.id).select("-password");
-    const targetUser = await userModel.findById(targetId).select("-password");
+  // Self-following check
+  if (userId === targetId) {
+    return res.status(400).json({ message: "You cannot follow yourself!" });
+  }
+
+  try {
+    const user = await userModel.findById(userId);
+    const targetUser = await userModel.findById(targetId);
 
     if (!user || !targetUser) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: "User not found!" });
     }
 
-    if (targetUser.followers.indexOf(user._id) === -1) {
-      // Add follow
-      targetUser.followers.push(user._id);
-      user.following.push(targetId);
+    const isFollowing = user.following.includes(targetId);
+
+    if (isFollowing) {
+      // Unfollow logic
+      user.following = user.following.filter((id) => id.toString() !== targetId);
+      targetUser.followers = targetUser.followers.filter((id) => id.toString() !== userId);
     } else {
-      // Remove follow
-      targetUser.followers.splice(targetUser.followers.indexOf(user._id), 1);
-      user.following.splice(user.following.indexOf(targetId), 1);
+      // Follow logic
+      user.following.push(targetId);
+      targetUser.followers.push(userId);
     }
 
-    await targetUser.save();
+    // Save both users
     await user.save();
+    await targetUser.save();
 
-    return res.status(200).json({
-      message:
-        targetUser.followers.indexOf(user._id) === -1
-          ? "User unfollowed successfully."
-          : "User followed successfully.",
+    res.status(200).json({
+      message: isFollowing ? "Unfollowed successfully!" : "Followed successfully!",
+      user: {
+        following: user.following,
+        followers: targetUser.followers,
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "An error occurred.", error });
+    console.error(error); // Console mein error log karna useful hoga
+    res.status(500).json({ message: "Internal Server Error", error });
   }
 };
 
@@ -150,13 +158,18 @@ export const likePost = async (req, res) => {
 
 export const getProfile = async (req, res) => {
   try {
-    const user = await userModel.findOne({ username: req.params.username }).populate("posts").select("-password");
+    const user = await userModel
+      .findOne({ username: req.params.username })
+      .populate("posts")
+      .select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
     // Add image URLs to each post
     user.posts = user.posts.map((post) => {
-        post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${post.postData}`;
-        return post;
-      });
+      post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${
+        post.postData
+      }`;
+      return post;
+    });
     res.json({ user });
   } catch (error) {
     res.status(500).json({ error: "Server error" });

@@ -1,15 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import LikeButton from "./LikeButton";
 import { Link } from "react-router-dom";
 
 function PostCard({ posts }) {
-    // console.log(posts);
-    
+  console.log(posts);
+  
+  const [isImageOpen, setIsImageOpen] = useState(false);
+
+  // Function to open the image modal
+  const openImage = () => {
+    setIsImageOpen(true);
+  };
+
+  // Function to close the image modal
+  const closeImage = () => {
+    setIsImageOpen(false);
+  };
+
   return (
     <>
+      {/* Post Card */}
       <div className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4 transition duration-500">
         {/* Post Image */}
-        <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
+        <div
+          className="relative w-full pb-[140%] overflow-hidden rounded-lg cursor-pointer"
+          onClick={openImage} // Open image when clicked
+        >
           <img
             className="absolute top-0 left-0 w-full h-full object-cover"
             src={posts.imageURL}
@@ -21,14 +37,12 @@ function PostCard({ posts }) {
         <div className="flex flex-col sm:flex-row sm:justify-between mt-4">
           {/* User Profile */}
           <Link to={`/profile/${posts.userData.username}`}>
-          <div className="flex items-center space-x-4 ">
-            <img
-              className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 cursor-pointer"
-              src={posts.userData.image}
-              alt="User Profile"
-            />
-
-            
+            <div className="flex items-center space-x-4">
+              <img
+                className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 cursor-pointer"
+                src={posts.userData.image}
+                alt="User Profile"
+              />
               <div>
                 <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
                   {posts.userData.name.length > 5
@@ -42,8 +56,8 @@ function PostCard({ posts }) {
                     : posts.userData.username}
                 </p>
               </div>
-          </div>
-            </Link>
+            </div>
+          </Link>
 
           {/* Actions (Like & Download Icons) */}
           <div className="flex items-center justify-between space-x-6 mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
@@ -60,6 +74,34 @@ function PostCard({ posts }) {
           </div>
         </div>
       </div>
+
+      {/* Modal for Enlarged Image */}
+      {isImageOpen && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50"
+    onClick={closeImage} // Close modal when clicking outside
+  >
+    <div
+      className="bg-opacity-50 rounded-lg max-w-md w-full relative px-7"
+      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+    >
+      {/* Close button at top right corner of the screen */}
+      <button
+        onClick={closeImage}
+        className="fixed top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all duration-200"
+      >
+        &times;
+      </button>
+
+      <img
+        className="w-full h-auto object-contain rounded-lg"
+        src={posts.imageURL}
+        alt="Post Image"
+      />
+    </div>
+  </div>
+)}
+
     </>
   );
 }

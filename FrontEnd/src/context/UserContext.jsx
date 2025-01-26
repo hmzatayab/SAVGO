@@ -9,14 +9,14 @@ export default function UserContext({ children }) {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // useEffect(() => {
-  //   // Update localStorage whenever user changes
-  //   if (user) {
-  //     localStorage.setItem("user", JSON.stringify(user));
-  //   } else {
-  //     localStorage.removeItem("user");
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    // Update localStorage whenever user changes
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
 
   return (
     <UserDataContext.Provider value={{ user, setUser }}>

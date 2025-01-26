@@ -51,7 +51,8 @@ export const Header = () => {
                       : user.name}
                   </span>
                   <span className="block truncate text-sm font-normal italic">
-                    @{user.username.length > 15
+                    @
+                    {user.username.length > 15
                       ? user.username.slice(0, 15) + "..."
                       : user.username}
                   </span>
@@ -67,13 +68,16 @@ export const Header = () => {
                 </Dropdown.Item>
               </Dropdown>
               {/* Mobile Menu Button */}
-              <div>
+              <div className="flex justify-center items-center">
                 <button
                   className="lg:hidden text-white bg-gray-700 p-2 rounded-lg"
                   onClick={toggleDrawer}
                 >
                   <i className="ri-menu-line text-2xl"></i>
                 </button>
+                <Link to={"/logout"} className="hidden sm:flex lg:block">
+                  <i className="ri-logout-circle-r-line text-xl text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"></i>
+                </Link>
               </div>
             </div>
           ) : (

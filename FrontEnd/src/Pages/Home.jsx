@@ -38,6 +38,10 @@ function Home() {
     <AnimationWrapper
       initial={{ opacity: 0, scale: 0.5 }}
       exit={{ opacity: 0, scale: 0.5 }}
+      transition={{
+        duration: 0.3,
+        ease: [0.42, 0, 0.58, 1], // Custom cubic-bezier easing
+      }}
     >
       <div className="mt-28 p-5">
         {/* Upload Section */}

@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 import Skeleton from "../Components/Skeleton";
 import LikeButton from "../Components/LikeButton";
-import { userFollow } from "../store/Profile.store";
 
 const ProfilePage = () => {
   const token = localStorage.getItem("token");
-  const { user } = useContext(UserDataContext);
+  const { user, setUser } = useContext(UserDataContext);
   const [posts, setPosts] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log(userFollow);
   
   useEffect(() => {
     const getPosts = async () => {
@@ -20,7 +20,11 @@ const ProfilePage = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await response.json();
+        
         setPosts(data.post.posts);
+        setFollowers(user.followers)
+        setFollowing(user.following)
+        setUser(data.post)
         setLoading(false);
       } catch (error) {
         console.error("Error Get posts:", error);
@@ -64,7 +68,7 @@ const ProfilePage = () => {
               </Link>
               </div>
               <div className="flex items-center">
-                <i class="ri-mail-line text-white mr-2"></i>
+                <i className="ri-mail-line text-white mr-2"></i>
                 <p className="text-sm text-gray-400 italic">{user.email}</p>
               </div>
               {/* <p className="text-sm text-gray-400">
@@ -100,11 +104,11 @@ const ProfilePage = () => {
         {/* Stats Section */}
         <div className="grid grid-cols-3 gap-6">
           <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-            <h2 className="text-xl font-bold text-white">1,234</h2>
+            <h2 className="text-xl font-bold text-white">{followers.length}</h2>
             <p className="text-gray-400">Followers</p>
           </div>
           <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-            <h2 className="text-xl font-bold text-white">567</h2>
+            <h2 className="text-xl font-bold text-white">{following.length}</h2>
             <p className="text-gray-400">Following</p>
           </div>
           <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">

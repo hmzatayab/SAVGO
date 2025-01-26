@@ -72,6 +72,8 @@ export const userLogin = async (req, res) => {
         name: user.name,
         email: user.email,
         image: user.image,
+        followers: user.followers,
+        following: user.following,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
@@ -105,7 +107,7 @@ export const userUpdate = async (req, res) => {
 
 export const userLogout = async (req, res) => {
   res.clearCookie("token");
-  res.status(200).json({ message: "Logged out" });
+  res.status(200).json({ message: "Logged out"});
 }
 
 export const getUserProfile = async (req, res) => {

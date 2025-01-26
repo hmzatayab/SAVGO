@@ -3,16 +3,34 @@ import axios from "axios";
 import { useNotification } from "../context/NotificationContext";
 import { useNavigate } from "react-router-dom";
 
-const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
+const LikeButton = ({ postId, initialLikes }) => {
   const navigate = useNavigate();
 
   // States
   const [likes, setLikes] = useState(initialLikes);
-  const [liked, setLiked] = useState(isInitiallyLiked);
+  const [liked, setLiked] = useState(false); // Initially false
   const { showNotification } = useNotification();
 
   // Check if the user is authenticated
   const isAuthenticated = localStorage.getItem("token");
+
+  // Function to fetch the initial liked status
+  const fetchLikedStatus = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/profile/like/${postId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setLiked(response.data.isLikedByCurrentUser); // Backend response sets liked status
+    } catch (error) {
+      console.error("Error fetching liked status:", error.response?.data || error.message);
+    }
+  };
 
   // Function to handle like/unlike
   const handleLike = async () => {
@@ -34,37 +52,28 @@ const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
       setLikes(updatedLikes); // Update likes count
       setLiked(isLikedByCurrentUser); // Update liked state
     } catch (error) {
-      console.error(
-        "Error liking post:",
-        error.response?.data || error.message
-      );
+      console.error("Error liking post:", error.response?.data || error.message);
       navigate("/login"); // Redirect to login if not authenticated
     }
   };
 
-  // Reinitialize state if `isInitiallyLiked` changes (when page reloads)
+  // Fetch initial liked status on component mount
   useEffect(() => {
-    setLiked(isInitiallyLiked); // Update liked state on mount
-    setLikes(initialLikes); // Update likes count on mount
-  }, [initialLikes, isInitiallyLiked]);
+    fetchLikedStatus();
+  }, [postId]);
 
   return (
     <div className="flex items-center space-x-2">
       {isAuthenticated ? (
-        liked ? (
-          <i
-            className="ri-heart-fill ri-lg sm:ri-xl cursor-pointer text-red-500"
-            onClick={handleLike}
-          ></i>
-        ) : (
-          <i
-            className="ri-heart-line ri-lg sm:ri-xl cursor-pointer text-gray-400"
-            onClick={handleLike}
-          ></i>
-        )
+        <i
+          className={`ri-lg sm:ri-xl cursor-pointer ${
+            liked ? "ri-heart-fill text-red-500" : "ri-heart-line text-red-400"
+          }`}
+          onClick={handleLike}
+        ></i>
       ) : (
         <i
-          className="ri-heart-line ri-lg sm:ri-xl cursor-pointer text-gray-400"
+          className="ri-heart-line ri-lg sm:ri-xl cursor-pointer text-red-400"
           onClick={() => showNotification("Please Logged In First")}
         ></i>
       )}
@@ -74,3 +83,4 @@ const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
 };
 
 export default LikeButton;
+
