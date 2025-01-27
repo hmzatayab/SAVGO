@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: ""
+      default: "",
     },
     posts: [
       {
@@ -34,14 +34,20 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-      }
+      },
     ],
     following: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post" 
       }
-    ]
+    ],
   },
   { timestamps: true }
 );

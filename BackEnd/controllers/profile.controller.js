@@ -3,11 +3,15 @@ import postModel from "../models/post.model.js";
 import mongoose from "mongoose";
 
 export const imageUpload = async (req, res) => {
+  const { title, description, tags } = req.body;
   try {
     const user = await userModel.findById(req.user.id).select("-password");
     let post = await postModel.create({
       postData: req.file.filename,
       user: user._id,
+      title,
+      description,
+      tags,
     });
 
     user.posts.push(post._id);
@@ -39,8 +43,12 @@ export const followUser = async (req, res) => {
 
     if (isFollowing) {
       // Unfollow logic
-      user.following = user.following.filter((id) => id.toString() !== targetId);
-      targetUser.followers = targetUser.followers.filter((id) => id.toString() !== userId);
+      user.following = user.following.filter(
+        (id) => id.toString() !== targetId
+      );
+      targetUser.followers = targetUser.followers.filter(
+        (id) => id.toString() !== userId
+      );
     } else {
       // Follow logic
       user.following.push(targetId);
@@ -52,7 +60,9 @@ export const followUser = async (req, res) => {
     await targetUser.save();
 
     res.status(200).json({
-      message: isFollowing ? "Unfollowed successfully!" : "Followed successfully!",
+      message: isFollowing
+        ? "Unfollowed successfully!"
+        : "Followed successfully!",
       user: {
         following: user.following,
         followers: targetUser.followers,
@@ -111,7 +121,7 @@ export const likePost = async (req, res) => {
       return res.status(400).json({ error: "Invalid post ID" });
     }
 
-    const userId = req.user.id;
+    const userId = req.user.id; // Logged-in user's ID
     const user = await userModel.findById(userId).select("-password");
 
     if (!user) {
@@ -129,12 +139,23 @@ export const likePost = async (req, res) => {
     if (userIndex === -1) {
       // If user ID is not found, add it (like)
       post.likes.push(user._id);
+
+      // Add the post to the user's wishlist
+      if (!user.wishlist.includes(post._id)) {
+        user.wishlist.push(post._id);
+      }
     } else {
       // If user ID is found, remove it (unlike)
       post.likes.splice(userIndex, 1);
+
+      // Remove the post from the user's wishlist
+      user.wishlist = user.wishlist.filter(
+        (wishlistPostId) => wishlistPostId.toString() !== post._id.toString()
+      );
     }
 
     await post.save();
+    await user.save();
 
     const isLikedByCurrentUser = post.likes.includes(user._id);
 
@@ -149,10 +170,29 @@ export const likePost = async (req, res) => {
         isLikedByCurrentUser,
         date: post.date,
       },
+      wishlist: user.wishlist, // Include updated wishlist in response
     });
   } catch (error) {
     console.error("Error liking post:", error);
     res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+export const getWishlist = async (req, res) => {
+  try {
+    const user = await userModel
+      .findById(req.user.id)
+      .populate("wishlist")
+      .select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    return res.status(200).json({ wishlist: user.wishlist });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred.", error });
   }
 };
 

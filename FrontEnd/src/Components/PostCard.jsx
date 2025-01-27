@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import LikeButton from "./LikeButton";
 import { Link } from "react-router-dom";
+import AnimationWrapper from "../Components/Animations";
 
 function PostCard({ posts }) {
-  console.log(posts);
-  
+
   const [isImageOpen, setIsImageOpen] = useState(false);
 
   // Function to open the image modal
@@ -77,31 +77,41 @@ function PostCard({ posts }) {
 
       {/* Modal for Enlarged Image */}
       {isImageOpen && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50"
-    onClick={closeImage} // Close modal when clicking outside
-  >
-    <div
-      className="bg-opacity-50 rounded-lg max-w-md w-full relative px-7"
-      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
-    >
-      {/* Close button at top right corner of the screen */}
-      <button
-        onClick={closeImage}
-        className="fixed top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all duration-200"
-      >
-        &times;
-      </button>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 h-full w-full"
+          onClick={closeImage} // Close modal when clicking outside
+        >
+          {/* Wrapping only the modal content in AnimationWrapper */}
+          <AnimationWrapper
+            initial={{ opacity: 0, scale: 0.8 }} // Starts slightly zoomed-out
+            animate={{ opacity: 1, scale: 1 }} // Zooms to normal size
+            exit={{ opacity: 0, scale: 1.2 }} // Zooms out slightly on close
+            transition={{
+              duration: 0.3,
+              ease: [0.42, 0, 0.58, 1], // Custom cubic-bezier easing
+            }}
+          >
+            <div
+              className="bg-gray-900 bg-opacity-50 rounded-lg max-w-md w-full relative px-7"
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+            >
+              {/* Close button at top right corner of the screen */}
+              <button
+                onClick={closeImage}
+                className="fixed top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all duration-200"
+              >
+                &times;
+              </button>
 
-      <img
-        className="w-full h-auto object-contain rounded-lg"
-        src={posts.imageURL}
-        alt="Post Image"
-      />
-    </div>
-  </div>
-)}
-
+              <img
+                className="w-full h-auto object-contain rounded-lg"
+                src={posts.imageURL}
+                alt="Post Image"
+              />
+            </div>
+          </AnimationWrapper>
+        </div>
+      )}
     </>
   );
 }

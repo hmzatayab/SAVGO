@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Avatar, Dropdown } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 
 export const Header = () => {
@@ -28,7 +28,9 @@ export const Header = () => {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-4 ">
-            <MenuButton label="Wishlist" icon="ri-heart-line" />
+            <Link to={"/wishlist"}>
+              <MenuButton label="Wishlist" icon="ri-heart-line" />
+            </Link>
             <Link to={"/pricing"}>
               <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
             </Link>
@@ -119,9 +121,15 @@ export const Header = () => {
           </button>
         </div>
         <div className="flex flex-col space-y-4">
-          <MenuButton label="Wishlist" icon="ri-heart-line" />
-          <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
-          <MenuButton label="Messages" icon="ri-chat-1-line" />
+          <Link to={"/wishlist"}>
+            <MenuButton label="Wishlist" icon="ri-heart-line" />
+          </Link>
+          <Link to={"/pricing"}>
+            <MenuButton label="Pricing" icon="ri-price-tag-3-line" />
+          </Link>
+          <Link to={"/chat"}>
+            <MenuButton label="Messages" icon="ri-chat-1-line" />
+          </Link>
         </div>
       </div>
     </div>

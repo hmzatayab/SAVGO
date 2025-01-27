@@ -10,8 +10,25 @@ const postSchema = mongoose.Schema({
     name: String,
     username: String,
     email: String,
-    image: String
+    image: String,
+    userID: String,
+    followers: String,
+    following: String,
   },
+  title: {
+    type: String,
+    default: ""
+  },
+  description: {
+    type: String,
+    default: ""
+  },
+  tags: [
+    {
+      type: String,
+      default: []
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,

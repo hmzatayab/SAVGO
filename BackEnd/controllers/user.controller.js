@@ -24,7 +24,8 @@ export const userRegister = async (req, res) => {
       name,
       email,
       password: hashPassword,
-      image: "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+      image:
+        "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
     });
 
     await user.save();
@@ -57,7 +58,9 @@ export const userLogin = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h", });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -78,7 +81,6 @@ export const userLogin = async (req, res) => {
         updatedAt: user.updatedAt,
       },
     });
-    
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -95,55 +97,69 @@ export const userUpdate = async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    res.status(200).json({ success: true, message: "Successfully Updated", updatedUser });
+    res
+      .status(200)
+      .json({ success: true, message: "Successfully Updated", updatedUser });
   } catch (error) {
     console.error("Error updating user:", error.message);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
   }
 };
 
 export const userLogout = async (req, res) => {
   res.clearCookie("token");
-  res.status(200).json({ message: "Logged out"});
-}
+  res.status(200).json({ message: "Logged out" });
+};
 
 export const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user.id).select("-password"); // Exclude password from response
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Error fetching user profile:", error.message);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
   }
 };
 
 export const getAllUser = async (req, res) => {
   const user = await userModel.find();
   res.status(200).json({ success: true, user });
-}
+};
 
 export const getAllpost = async (req, res) => {
   try {
     const users = await userModel.find().populate("posts").select("-password");
     const allPosts = [];
 
-    users.forEach(user => {
-      
-      user.posts.forEach(post => {
-        post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${post.postData}`;
+    users.forEach((user) => {
+      user.posts.forEach((post) => {
+        post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${
+          post.postData
+        }`;
         post.userData = {
           name: user.name,
           username: user.username,
           email: user.email,
           image: user.image,
+          userID: user._id,
+          followers: user.followers,
+          following: user.following,
         };
         allPosts.push(post); // Collect each post
       });
@@ -152,19 +168,30 @@ export const getAllpost = async (req, res) => {
     res.status(200).json({ success: true, posts: allPosts });
   } catch (error) {
     console.error("Error fetching posts:", error);
-    res.status(500).json({ success: false, message: "An error occurred while fetching posts" });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "An error occurred while fetching posts",
+      });
   }
-}
+};
 
 export const getUserAllPost = async (req, res) => {
   if (!req.user) {
-    return res.status(401).json({ success: false, message: "User not authenticated" });
+    return res
+      .status(401)
+      .json({ success: false, message: "User not authenticated" });
   }
-  const post = await userModel.findById(req.user.id).populate("posts").select("-password");
-  post.posts.forEach(post => {
-    post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${post.postData}`;
+  const post = await userModel
+    .findById(req.user.id)
+    .populate("posts")
+    .select("-password");
+  post.posts.forEach((post) => {
+    post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${
+      post.postData
+    }`;
   });
 
   res.status(200).json({ success: true, post });
 };
-

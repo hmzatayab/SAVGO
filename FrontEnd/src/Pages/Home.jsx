@@ -3,11 +3,25 @@ import { Link } from "react-router-dom";
 import Skeleton from "../Components/Skeleton";
 import PostCard from "../Components/PostCard";
 import AnimationWrapper from "../Components/Animations";
+import UploadDrawer from "../Components/UploadDrawer"; 
 
 function Home() {
   const token = localStorage.getItem("token");
   const [allPosts, setAllPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Function to open the upload drawer
+  const openDrawer = () => {
+    setIsDrawerOpen(true);
+  };
+
+  // Function to close the upload drawer
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+  };
+
 
   useEffect(() => {
     const getAllPosts = async () => {
@@ -47,7 +61,7 @@ function Home() {
         {/* Upload Section */}
         {token ? (
           <section>
-            <Link to="/upload" state={{ from: "home" }}>
+            <Link  onClick={openDrawer} state={{ from: "home" }}>
               <div className="flex items-center justify-center w-full">
                 <label
                   htmlFor="dropzone-file"
@@ -78,6 +92,7 @@ function Home() {
                 </label>
               </div>
             </Link>
+            <UploadDrawer open={isDrawerOpen} onClose={closeDrawer} />
           </section>
         ) : (
           <section className="dark:bg-gray-900 bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern-dark.svg')]">

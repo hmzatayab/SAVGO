@@ -10,17 +10,17 @@ import Footer from "./Components/Footer";
 import RegisterPage from "./Pages/Register";
 import UserProfilePage from "./Pages/UserProfile.jsx";
 import ProfilePage from "./Pages/Dashboard.jsx"
-import UploadImage from "./Pages/Upload";
 import UpdateUser from "./Pages/Update";
 import Home from "./Pages/Home";
 import ChatPage from "./Pages/ChatRoom";
 import Pricing from "./Pages/Pricing.jsx";
 import "react-toastify/dist/ReactToastify.css";
+import Wishlist from "./Pages/Wishlist.jsx";
 
 
 function App() {
   const location = useLocation();
-  const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/upload", "/pricing"];
+  const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing"];
 
 
   return(
@@ -33,12 +33,12 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/login" element={<UserRedirectWrapper><LoginPage/></UserRedirectWrapper>}/>
         <Route path="/register" element={<RegisterPage/>}/>
-        <Route path="/upload" element={<UserProtectWrapper><UploadImage/></UserProtectWrapper>}/>
         <Route path="/dashboard" element={<UserProtectWrapper><ProfilePage/></UserProtectWrapper>}/>
         <Route path="/profile/:id" element={<UserProfilePage/>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
         <Route path="/chat" element={<UserProtectWrapper><ChatPage/></UserProtectWrapper>}/>
+        <Route path="/wishlist" element={<UserProtectWrapper><Wishlist/></UserProtectWrapper>}/>
         <Route path="/pricing" element={<Pricing/>}/>
       </Routes>
       </AnimatePresence>
