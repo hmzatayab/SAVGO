@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 import Skeleton from "../Components/Skeleton";
 import LikeButton from "../Components/LikeButton";
+import UploadDrawer from "../Components/UploadDrawer";
 
 const ProfilePage = () => {
   const token = localStorage.getItem("token");
@@ -11,7 +12,20 @@ const ProfilePage = () => {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  console.log(user._id);
   
+
+  // Function to open the upload drawer
+  const openDrawer = () => {
+    setIsDrawerOpen(true);
+  };
+
+  // Function to close the upload drawer
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+  };
+
   useEffect(() => {
     const getPosts = async () => {
       try {
@@ -20,11 +34,11 @@ const ProfilePage = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await response.json();
-        
+
         setPosts(data.post.posts);
-        setFollowers(user.followers)
-        setFollowing(user.following)
-        setUser(data.post)
+        setFollowers(user.followers);
+        setFollowing(user.following);
+        setUser(data.post);
         setLoading(false);
       } catch (error) {
         console.error("Error Get posts:", error);
@@ -57,15 +71,15 @@ const ProfilePage = () => {
             </div>
             <div className="text-center lg:text-left">
               <div className="flex items-center">
-              <h1 className="text-3xl font-bold text-white">{user.name}</h1>
-              <Link
-                to={"/update"}
-                state={{ from: "dashboard" }}
-                title="Edit Profile"
-                className="inline-block ml-3"
-              >
-                <i className="ri-edit-2-fill text-white"></i>
-              </Link>
+                <h1 className="text-3xl font-bold text-white">{user.name}</h1>
+                <Link
+                  to={"/update"}
+                  state={{ from: "dashboard" }}
+                  title="Edit Profile"
+                  className="inline-block ml-3"
+                >
+                  <i className="ri-edit-2-fill text-white"></i>
+                </Link>
               </div>
               <div className="flex items-center">
                 <i className="ri-mail-line text-white mr-2"></i>
@@ -85,19 +99,19 @@ const ProfilePage = () => {
                   return `${hiddenUsername}@${hiddenDomain}`;
                 })()}
               </p> */}
-
             </div>
           </div>
 
           {/* Settings Icon */}
           <div className="flex justify-center lg:justify-end">
             <Link
-              to={"/upload"}
+              onClick={openDrawer}
               state={{ from: "dashboard" }}
               className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
             >
               Upload Image
             </Link>
+            <UploadDrawer open={isDrawerOpen} onClose={closeDrawer} />
           </div>
         </div>
 
@@ -174,7 +188,7 @@ const ProfilePage = () => {
                         <LikeButton
                           postId={post._id}
                           initialLikes={post.likes.length}
-                          isInitiallyLiked={post.likes.includes(post.user)} // Pass logged-in user ID
+                          isInitiallyLiked={post.likes.includes(user._id)} // Pass logged-in user ID
                         />
                       </div>
                       <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const postSchema = mongoose.Schema({
   postData: String,
@@ -39,6 +40,10 @@ const postSchema = mongoose.Schema({
       ref: "User",
     },
   ],
+  isLikedByCurrentUser :{
+    type: Boolean,
+    default: false
+  },
   imageURL: { type: String },
 });
 

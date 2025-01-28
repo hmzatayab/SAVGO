@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import LikeButton from "./LikeButton";
 import { Link } from "react-router-dom";
 import AnimationWrapper from "../Components/Animations";
+import { UserDataContext } from "../context/UserContext";
 
 function PostCard({ posts }) {
+  console.log(posts);
+
+  const { user } = useContext(UserDataContext);
+  // console.log(user._id);
 
   const [isImageOpen, setIsImageOpen] = useState(false);
 
@@ -59,18 +64,29 @@ function PostCard({ posts }) {
             </div>
           </Link>
 
-          {/* Actions (Like & Download Icons) */}
-          <div className="flex items-center justify-between space-x-6 mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
+          {/* Actions (Like & Comment Icons) */}
+          <div className="flex items-center justify-between mt-4 sm:mt-0 w-full sm:w-auto">
             {/* Like Button */}
-            <div className="flex items-center space-x-2 text-gray-400">
+            <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 mr-2 ">
               <LikeButton
                 postId={posts._id}
                 initialLikes={posts.likes.length}
-                isInitiallyLiked={posts.likes.includes(posts.user)} // Pass logged-in user ID
+                isInitiallyLiked={
+                  user?._id ? posts.likes.includes(user._id) : false
+                }
               />
             </div>
-            {/* Download Icon */}
-            <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
+
+            {/* Comment Icon */}
+            <div
+              className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 cursor-pointer"
+              onClick={openImage}
+            >
+              <i className="ri-chat-1-line text-gray-400 ri-lg"></i>
+              <span className="text-white font-semibold text-sm sm:text-base">
+                2.1k
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -92,22 +108,138 @@ function PostCard({ posts }) {
             }}
           >
             <div
-              className="bg-gray-900 bg-opacity-50 rounded-lg max-w-md w-full relative px-7"
+              className="rounded-lg max-w-5xl w-full mx-auto relative px-5 py-8 flex flex-col md:flex-row bg-gray-900 text-white"
               onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
             >
-              {/* Close button at top right corner of the screen */}
-              <button
-                onClick={closeImage}
-                className="fixed top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all duration-200"
-              >
-                &times;
-              </button>
+              {/* Post Image */}
+              <div className="flex-shrink-0 w-full md:w-2/5 mb-6 md:mb-0">
+                <button
+                  onClick={closeImage}
+                  className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-all duration-200"
+                >
+                  &times;
+                </button>
 
-              <img
-                className="w-full h-auto object-contain rounded-lg"
-                src={posts.imageURL}
-                alt="Post Image"
-              />
+                <img
+                  className="w-full h-auto object-contain rounded-lg shadow-lg"
+                  src={posts.imageURL}
+                  alt="Post Image"
+                />
+              </div>
+
+              {/* Right Section */}
+              <div className="flex-grow space-y-6 px-4 md:pl-8">
+                {/* Profile Section */}
+                <div className="flex items-center space-x-4">
+                  <Link to={`/profile/${posts.userData.username}`}>
+                    <img
+                      className="w-14 h-14 rounded-full object-cover"
+                      src={posts.userData.image}
+                      alt="Profile"
+                    />
+                  </Link>
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      {posts.userData.name}
+                    </h3>
+                    <p className="text-sm text-gray-400 italic">
+                      @{posts.userData.username}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Post Title and Description */}
+                <div>
+                  <h2 className="text-2xl font-bold">{posts.title}</h2>
+                  <p className="text-gray-300 mt-2 leading-relaxed">
+                    {posts.description}
+                  </p>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <span className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full">
+                    #Tag1
+                  </span>
+                  <span className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full">
+                    #Tag2
+                  </span>
+                  <span className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full">
+                    #Tag3
+                  </span>
+                </div>
+
+                {/* Comments Section */}
+                <div>
+                  <div className="flex items-center mb-4 p-2 rounded-lg bg-gray-800">
+                    <div className="flex items-center bg-gray-900 px-4 py-2 rounded-full space-x-2 mr-3">
+                      <span className="text-sm sm:text-base font-semibold ">
+                        Comments
+                      </span>
+                    </div>
+
+                    <div className="flex items-center bg-gray-900 px-4 py-2 rounded-full space-x-2 ">
+                      <LikeButton
+                        postId={posts._id}
+                        initialLikes={posts.likes.length}
+                        isInitiallyLiked={
+                          user?._id ? posts.likes.includes(user._id) : false
+                        }
+                      />
+                    </div>
+
+                    <div className="flex items-center bg-gray-900 px-4 py-2 rounded-full space-x-2 ml-3">
+                      <i className="ri-chat-1-line text-gray-400 ri-lg"></i>
+                      <span className="text-white font-semibold text-sm sm:text-base">
+                        2.1k
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 pr-2">
+                    {/* Single Comment */}
+                    <div className="flex items-start space-x-4">
+                      <img
+                        className="w-10 h-10 rounded-full object-cover"
+                        src="https://via.placeholder.com/80"
+                        alt="Commenter"
+                      />
+                      <div className="bg-gray-800 px-4 py-2 rounded-lg w-full">
+                        <h4 className="text-sm font-medium">Jane Doe</h4>
+                        <p className="text-sm text-gray-300">
+                          This is a comment on the post.
+                        </p>
+                      </div>
+                    </div>
+                    {/* Another Comment */}
+                    <div className="flex items-start space-x-4">
+                      <img
+                        className="w-10 h-10 rounded-full object-cover"
+                        src="https://via.placeholder.com/80"
+                        alt="Commenter"
+                      />
+                      <div className="bg-gray-800 px-4 py-2 rounded-lg w-full">
+                        <h4 className="text-sm font-medium">Emily Smith</h4>
+                        <p className="text-sm text-gray-300">
+                          Great post! Thanks for sharing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Add Comment */}
+                  <div className="mt-4 flex items-center space-x-2">
+                    <input
+                      type="text"
+                      className="flex-grow px-4 py-2 border border-gray-700 bg-gray-800 rounded-lg text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Write a comment..."
+                    />
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
+                      Post
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </AnimationWrapper>
         </div>

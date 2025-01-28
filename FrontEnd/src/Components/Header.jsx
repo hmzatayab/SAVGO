@@ -20,7 +20,7 @@ export const Header = () => {
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img
-              src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkbZeqDj7ZDAyBOeCx3b-uwUeFMN2N5CYroiABbvjSPxCJv9PZnb2DLKbwR4RZD0IR3nE9W9wV72EfWY28kKFJM5EhuyAS5d_QtlCvGBCU0EfaQfzRaazQldvUjSOrOdaZqOmlvftp5e-u33Q98Ifdsv-lJ_OJ9wn-ylV4FQrEWHOD6tE6Gbg20SjQXAxE/s16000/RCanvas.png"
+              src="../../public/logo.png"
               alt="Logo"
               className="w-36"
             />

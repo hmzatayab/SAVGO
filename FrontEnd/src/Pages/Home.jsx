@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import Skeleton from "../Components/Skeleton";
 import PostCard from "../Components/PostCard";
 import AnimationWrapper from "../Components/Animations";
-import UploadDrawer from "../Components/UploadDrawer"; 
+import UploadDrawer from "../Components/UploadDrawer";
 
 function Home() {
   const token = localStorage.getItem("token");
   const [allPosts, setAllPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Function to open the upload drawer
   const openDrawer = () => {
@@ -22,7 +22,6 @@ function Home() {
     setIsDrawerOpen(false);
   };
 
-
   useEffect(() => {
     const getAllPosts = async () => {
       try {
@@ -30,7 +29,7 @@ function Home() {
           `${import.meta.env.VITE_BASE_URL}/user/all-posts`,
           { headers: { Authorization: token ? `Bearer ${token}` : "" } }
         );
-        const data = await response.json();                
+        const data = await response.json();
         setAllPosts(data.posts);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -41,12 +40,35 @@ function Home() {
     getAllPosts();
   }, [token]);
 
-
-  
   // Get top 4 posts with the most likes
   const topPosts = allPosts
     .sort((a, b) => b.likes.length - a.likes.length)
     .slice(0, 4);
+
+
+
+  // Show the button when scrolled down
+  const toggleVisibility = () => {
+    if (window.scrollY > 300) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  };
+
+  // Scroll to the top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", toggleVisibility);
+    // Cleanup listener on component unmount
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
 
   return (
     <AnimationWrapper
@@ -61,7 +83,7 @@ function Home() {
         {/* Upload Section */}
         {token ? (
           <section>
-            <Link  onClick={openDrawer} state={{ from: "home" }}>
+            <Link onClick={openDrawer} state={{ from: "home" }}>
               <div className="flex items-center justify-center w-full">
                 <label
                   htmlFor="dropzone-file"
@@ -194,6 +216,31 @@ function Home() {
                 <PostCard posts={post} key={post._id} />
               ))}
             </div>
+          )}
+        </div>
+
+        <div>
+          {isVisible && (
+            <button
+              onClick={scrollToTop}
+              className="fixed bottom-4 right-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-3 rounded-xl shadow-2xl hover:scale-105 transform transition-all duration-300"
+              aria-label="Scroll to Top"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 15l7-7 7 7"
+                />
+              </svg>
+            </button>
           )}
         </div>
       </div>

@@ -158,6 +158,7 @@ export const likePost = async (req, res) => {
     await user.save();
 
     const isLikedByCurrentUser = post.likes.includes(user._id);
+    
 
     // Respond with updated data
     res.status(200).json({
