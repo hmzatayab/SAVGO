@@ -18,18 +18,39 @@ const postSchema = mongoose.Schema({
   },
   title: {
     type: String,
+    trim: true,
+    minlength: [15, "Title must be at least 15 characters"],
+    maxlength: [25, "Title cannot exceed 25 characters"],
+    required: [true, "Title is required"],
     default: ""
   },
   description: {
     type: String,
+    trim: true,
+    required: [true, "Description is required"],
+    validate: {
+      validator: function (value) {
+        return value.split(" ").length <= 30;
+      },
+      message: "Description cannot exceed 30 words",
+    },
     default: ""
   },
-  tags: [
-    {
-      type: String,
-      default: []
+  tags: {
+    type: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    validate: {
+      validator: function (value) {
+        return value.length <= 10;
+      },
+      message: "You can add a maximum of 10 tags",
     },
-  ],
+    default: [],
+  },
   date: {
     type: Date,
     default: Date.now,

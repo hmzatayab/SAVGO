@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import LikeButton from "./LikeButton";
 import { Link } from "react-router-dom";
+import "../index.css";
 import AnimationWrapper from "../Components/Animations";
 import { UserDataContext } from "../context/UserContext";
 
 function PostCard({ posts }) {
-  console.log(posts);
 
   const { user } = useContext(UserDataContext);
   // console.log(user._id);
@@ -94,9 +94,12 @@ function PostCard({ posts }) {
       {/* Modal for Enlarged Image */}
       {isImageOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 h-full w-full"
-          onClick={closeImage} // Close modal when clicking outside
-        >
+        className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 w-full 
+                   overflow-y-auto max-h-screen sm:max-h-full"
+        onClick={closeImage} // Close modal when clicking outside
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }} // Hide scrollbar for Firefox & Edge
+      >
+      
           {/* Wrapping only the modal content in AnimationWrapper */}
           <AnimationWrapper
             initial={{ opacity: 0, scale: 0.8 }} // Starts slightly zoomed-out
@@ -121,10 +124,11 @@ function PostCard({ posts }) {
                 </button>
 
                 <img
-                  className="w-full h-auto object-contain rounded-lg shadow-lg"
-                  src={posts.imageURL}
-                  alt="Post Image"
-                />
+  className="w-full max-h-[80vh] object-contain rounded-lg shadow-lg"
+  src={posts.imageURL}
+  alt="Post Image"
+/>
+
               </div>
 
               {/* Right Section */}
@@ -196,26 +200,147 @@ function PostCard({ posts }) {
                     </div>
                   </div>
 
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 pr-2">
+                  <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 pr-2" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
                     {/* Single Comment */}
-                    <div className="flex items-start space-x-4">
+                    
+
+                    <div className="flex items-start space-x-4 p-4 bg-gray-800 hover:bg-gray-950/50 transition-colors rounded-lg">
+                      {/* User Avatar */}
                       <img
-                        className="w-10 h-10 rounded-full object-cover"
-                        src="https://via.placeholder.com/80"
+                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
+                        src={posts.userData.image}
                         alt="Commenter"
                       />
-                      <div className="bg-gray-800 px-4 py-2 rounded-lg w-full">
-                        <h4 className="text-sm font-medium">Jane Doe</h4>
-                        <p className="text-sm text-gray-300">
-                          This is a comment on the post.
+
+                      {/* Comment Content */}
+                      <div className="flex-1">
+                        {/* User Info */}
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h4 className="text-sm font-semibold text-gray-100">
+                            Jane Doe
+                          </h4>
+                          <span className="text-xs text-gray-400">
+                            • 2 hours ago
+                          </span>
+                        </div>
+
+                        {/* Comment Text */}
+                        <p className="text-sm text-gray-300 leading-relaxed">
+                          This is a comment on the post. It can span multiple
+                          lines and will wrap naturally within the container.
                         </p>
+
+                        {/* Comment Actions (Like, Reply, etc.) */}
+                        <div className="flex items-center space-x-4 mt-2">
+                          <button className="text-sm text-red-400 hover:text-gray-200 transition-colors">
+                            Like{" "}
+                            <span className="pl-1 text-white font-semibold">
+                              2.1k
+                            </span>
+                          </button>
+                          <button className="text-sm text-gray-400 hover:text-gray-200 transition-colors">
+                            Reply
+                          </button>
+                        </div>
                       </div>
                     </div>
+
                     {/* Another Comment */}
-                    <div className="flex items-start space-x-4">
+                    <div className="flex flex-col space-y-4 p-4 bg-gray-800 hover:bg-gray-950/50 transition-colors rounded-lg">
+                      {/* Parent Comment */}
+                      <div className="flex items-start space-x-4">
+                        {/* User Avatar */}
+                        <img
+                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
+                          src={posts?.userData?.image || "/default-profile.png"} // Fallback added
+                          alt="Commenter"
+                        />
+
+                        {/* Comment Content */}
+                        <div className="flex-1">
+                          {/* User Info */}
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h4 className="text-sm font-semibold text-gray-100">
+                              Jane Doe
+                            </h4>
+                            <span className="text-xs text-gray-400">
+                              • 2 hours ago
+                            </span>
+                          </div>
+
+                          {/* Comment Text */}
+                          <p className="text-sm text-gray-300 leading-relaxed">
+                          This is a comment on the post. It can span multiple
+                          lines and will wrap naturally within the container.
+                          </p>
+
+                          {/* Comment Actions (Like, Reply, etc.) */}
+                          <div className="flex items-center space-x-4 mt-2">
+                            <button className="text-sm text-red-400 hover:text-gray-200 transition-colors">
+                              Like{" "}
+                              <span className="pl-1 text-white font-semibold">
+                                2.1k
+                              </span>
+                            </button>
+                            <button className="text-sm text-gray-400 hover:text-gray-200 transition-colors">
+                              Reply
+                            </button>
+                          </div>
+
+                          {/* ✅ Nested Comment Below Parent Comment */}
+                          <div className="mt-4 pl-10 border-l border-gray-700">
+                            {/* Reply Comment */}
+                            <div className="flex items-start space-x-4">
+                              {/* Reply User Avatar */}
+                              <img
+                                className="w-10 h-10 rounded-full object-cover border-2 border-gray-700"
+                                src={
+                                  posts?.userData?.image ||
+                                  "/default-profile.png"
+                                } // Fallback added
+                                alt="Reply User"
+                              />
+
+                              {/* Reply Content */}
+                              <div className="flex-1">
+                                {/* User Info */}
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <h4 className="text-sm font-semibold text-gray-100">
+                                    John Doe
+                                  </h4>
+                                  <span className="text-xs text-gray-400">
+                                    • 1 hour ago
+                                  </span>
+                                </div>
+
+                                {/* Reply Text */}
+                                <p className="text-sm text-gray-300 leading-relaxed">
+                                  This is a nested reply to the comment.
+                                </p>
+
+                                {/* Reply Actions */}
+                                <div className="flex items-center space-x-4 mt-2">
+                                  <button className="text-sm text-red-400 hover:text-gray-200 transition-colors">
+                                    Like{" "}
+                                    <span className="pl-1 text-white font-semibold">
+                                      500
+                                    </span>
+                                  </button>
+                                  {/* <button className="text-sm text-gray-400 hover:text-gray-200 transition-colors">
+                                    Reply
+                                  </button> */}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className="flex items-start space-x-4">
                       <img
                         className="w-10 h-10 rounded-full object-cover"
-                        src="https://via.placeholder.com/80"
+                        src={posts.userData.image}
                         alt="Commenter"
                       />
                       <div className="bg-gray-800 px-4 py-2 rounded-lg w-full">
@@ -224,7 +349,7 @@ function PostCard({ posts }) {
                           Great post! Thanks for sharing.
                         </p>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Add Comment */}

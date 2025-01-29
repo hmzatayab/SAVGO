@@ -8,7 +8,7 @@ const NotificationBar = ({ message, imageUrl, onClose }) => {
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 100, scale: 0.8 }}
       transition={{ duration: 0.3, ease: [0.6, -0.05, 0.01, 0.99] }}
-      className="fixed bottom-4 right-4 max-w-sm bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white rounded-lg shadow-lg p-4 flex items-center space-x-4"
+      className="fixed bottom-4 right-4 max-w-sm bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white rounded-lg shadow-lg p-4 flex items-center space-x-4 z-50"
     >
       {/* Image or Default Icon */}
       {imageUrl ? (

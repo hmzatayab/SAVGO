@@ -25,9 +25,31 @@ const UploadDrawer = ({ open, onClose }) => {
       showNotification("Please upload an image file!");
       return;
     }
-
-    // Convert tags to an array
-    const tagsArray = tags.split(",").map(tag => tag.trim());
+    if (title.length < 15 || title.length > 25) {
+      showNotification("Title must be between 15 and 25 characters");
+      return;
+    }
+    const descriptionWords = description.trim().split(/\s+/).length; // Count words in description
+    if (descriptionWords < 10) {
+      showNotification("Description must be at least 10 words");
+      return;
+    }
+    if (descriptionWords > 30) {
+      showNotification("Description cannot exceed 30 words");
+      return;
+    }
+    const tagsArray = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== ""); // Remove empty tags
+    if (tagsArray.length < 3) {
+      showNotification("You must add at least 3 tags");
+      return;
+    }
+    if (tagsArray.length > 10) {
+      showNotification("You can add a maximum of 10 tags");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("imageUpload", imageFile);
@@ -49,12 +71,15 @@ const UploadDrawer = ({ open, onClose }) => {
 
       if (response.ok) {
         setTimeout(() => {
-          showNotification("Image uploaded successfully!", URL.createObjectURL(imageFile));
+          showNotification(
+            "Image uploaded successfully!",
+            URL.createObjectURL(imageFile)
+          );
         }, 1000);
         navigate("/"); // Redirect after upload
       } else {
         const errorData = await response.json();
-        // showNotification(errorData.message);
+        showNotification(errorData.message);
       }
     } catch (error) {
       showNotification("An error occurred while uploading the image.");
@@ -78,13 +103,17 @@ const UploadDrawer = ({ open, onClose }) => {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${open ? "opacity-100" : "opacity-0 pointer-events-none"} backdrop-blur-md`}
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity ${
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
+        } backdrop-blur-md`}
         onClick={onClose} // Close when clicked outside
       ></div>
 
       {/* Drawer Content */}
       <div
-        className={`fixed bottom-0 left-0 w-full bg-gray-900 p-6 transition-transform transform ${open ? "translate-y-0" : "translate-y-full"} z-50 rounded-tl-xl rounded-tr-xl shadow-2xl`}
+        className={`fixed bottom-0 left-0 w-full bg-gray-900 p-6 transition-transform transform ${
+          open ? "translate-y-0" : "translate-y-full"
+        } z-50 rounded-tl-xl rounded-tr-xl shadow-2xl`}
       >
         <div className="flex justify-between items-center">
           <div className="relative mb-8">
@@ -128,7 +157,9 @@ const UploadDrawer = ({ open, onClose }) => {
                     <p className="mb-2 text-sm text-gray-400">
                       <span className="font-semibold">Click to upload</span>
                     </p>
-                    <p className="text-xs text-gray-400">SVG, PNG, or JPG (Ratio 9:16)</p>
+                    <p className="text-xs text-gray-400">
+                      SVG, PNG, or JPG (Ratio 9:16)
+                    </p>
                   </div>
                   <input
                     id="dropzone-file"
@@ -158,7 +189,11 @@ const UploadDrawer = ({ open, onClose }) => {
 
           {/* Right Section: Form Inputs */}
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-            <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-6"
+              encType="multipart/form-data"
+            >
               {/* Title */}
               <div>
                 <label className="text-white block text-sm mb-2">Title</label>
@@ -168,26 +203,30 @@ const UploadDrawer = ({ open, onClose }) => {
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
                   placeholder="Enter a title"
-                  required
+                  // required
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="text-white block text-sm mb-2">Description</label>
+                <label className="text-white block text-sm mb-2">
+                  Description
+                </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
                   rows="4"
                   placeholder="Describe your image"
-                  required
+                  // required
                 ></textarea>
               </div>
 
               {/* Tags */}
               <div>
-                <label className="text-white block text-sm mb-2">Tags (separate with commas)</label>
+                <label className="text-white block text-sm mb-2">
+                  Tags (separate with commas)
+                </label>
                 <input
                   type="text"
                   value={tags}
