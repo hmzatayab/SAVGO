@@ -6,6 +6,7 @@ import cors from "cors";
 import path from 'path';
 import userRouter from './routers/user.routes.js';
 import profileRouter from './routers/profile.routes.js'
+import commentRouter from './routers/comment.routes.js'
 import { fileURLToPath } from 'url';
 
 
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 
 app.use("/user", userRouter);
 app.use("/profile", profileRouter);
+app.use("/c", commentRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, '0.0.0.0', () => {

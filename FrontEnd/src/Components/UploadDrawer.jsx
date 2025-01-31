@@ -12,7 +12,43 @@ const UploadDrawer = ({ open, onClose }) => {
 
   // Handle image upload
   const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check image dimensions and aspect ratio
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const { width, height } = img;
+
+      // Check dimensions
+      if (
+        !(
+          (
+            (width === 1080 && height === 1920) || // 1080x1920 px
+            (width === 720 && height === 1280)
+          ) // 720x1280 px
+        )
+      ) {
+        showNotification("Image size must be 1080x1920 px or 720x1280 px.");
+        return;
+      }
+
+      // Check aspect ratio (9:16)
+      const aspectRatio = width / height;
+      if (Math.abs(aspectRatio - 9 / 16) > 0.01) {
+        showNotification("Image aspect ratio must be 9:16.");
+        return;
+      }
+
+      // If everything is valid, set the image file
+      setImageFile(file);
+    };
+
+    img.onerror = () => {
+      showNotification("Invalid image file.");
+    };
   };
 
   // Handle form submission
@@ -25,30 +61,46 @@ const UploadDrawer = ({ open, onClose }) => {
       showNotification("Please upload an image file!");
       return;
     }
+
+    // Title validation
     if (title.length < 15 || title.length > 25) {
       showNotification("Title must be between 15 and 25 characters");
-      return;
+      return false;
     }
-    const descriptionWords = description.trim().split(/\s+/).length; // Count words in description
-    if (descriptionWords < 10) {
-      showNotification("Description must be at least 10 words");
-      return;
+
+    // Description validation (Character count: Min 100, Max 250)
+    const descriptionCharCount = description.length; // Count characters in description
+    if (descriptionCharCount < 100) {
+      showNotification("Description must be at least 100 characters");
+      return false;
     }
-    if (descriptionWords > 30) {
-      showNotification("Description cannot exceed 30 words");
-      return;
+    if (descriptionCharCount > 250) {
+      showNotification("Description cannot exceed 250 characters");
+      return false;
     }
+
+    // Tags validation
     const tagsArray = tags
-      .split(",")
-      .map((tag) => tag.trim())
+      .split(",") // Split by commas
+      .map((tag) => tag.trim()) // Trim spaces
       .filter((tag) => tag !== ""); // Remove empty tags
+
+    // Validate tag count (min 3 tags, max 10 tags)
     if (tagsArray.length < 3) {
       showNotification("You must add at least 3 tags");
-      return;
+      return false;
     }
     if (tagsArray.length > 10) {
       showNotification("You can add a maximum of 10 tags");
-      return;
+      return false;
+    }
+
+    // Validate each tag length (min 3, max 15 characters)
+    for (let tag of tagsArray) {
+      if (tag.length < 3 || tag.length > 15) {
+        showNotification("Each tag must be between 3 and 15 characters");
+        return false;
+      }
     }
 
     const formData = new FormData();
@@ -158,7 +210,7 @@ const UploadDrawer = ({ open, onClose }) => {
                       <span className="font-semibold">Click to upload</span>
                     </p>
                     <p className="text-xs text-gray-400">
-                      SVG, PNG, or JPG (Ratio 9:16)
+                      SVG, PNG, or JPG (Ratio 9:16, Size 1080x1920 px)
                     </p>
                   </div>
                   <input
@@ -217,7 +269,7 @@ const UploadDrawer = ({ open, onClose }) => {
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
                   rows="4"
-                  placeholder="Describe your image"
+                  placeholder="Describe your image (max 250 characters)"
                   // required
                 ></textarea>
               </div>

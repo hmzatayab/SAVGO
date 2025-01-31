@@ -16,6 +16,7 @@ import ChatPage from "./Pages/ChatRoom";
 import Pricing from "./Pages/Pricing.jsx";
 import "react-toastify/dist/ReactToastify.css";
 import Wishlist from "./Pages/Wishlist.jsx";
+import PostDetail from "./Pages/PostDetail.jsx";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/dashboard" element={<UserProtectWrapper><ProfilePage/></UserProtectWrapper>}/>
         <Route path="/profile/:id" element={<UserProfilePage/>}/>
+        <Route path="/post/:id" element={<PostDetail></PostDetail>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
         <Route path="/chat" element={<UserProtectWrapper><ChatPage/></UserProtectWrapper>}/>

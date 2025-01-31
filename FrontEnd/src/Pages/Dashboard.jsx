@@ -14,7 +14,6 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   console.log(user._id);
-  
 
   // Function to open the upload drawer
   const openDrawer = () => {
@@ -150,12 +149,14 @@ const ProfilePage = () => {
                 >
                   {/* Post Image */}
                   <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
+                    <Link to={`/post/${post._id}`}>
                     <img
                       className="absolute top-0 left-0 w-full h-full object-cover"
                       key={post._id}
                       src={post.imageURL}
                       alt="Post Image"
                     />
+                    </Link>
                   </div>
 
                   {/* User Details & Actions */}
@@ -188,7 +189,9 @@ const ProfilePage = () => {
                         <LikeButton
                           postId={post._id}
                           initialLikes={post.likes.length}
-                          isInitiallyLiked={post.likes.includes(user._id)} // Pass logged-in user ID
+                          isInitiallyLiked={
+                            user?._id ? post.likes.includes(user._id) : false
+                          }
                         />
                       </div>
                       <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>

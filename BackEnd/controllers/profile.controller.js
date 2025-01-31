@@ -158,7 +158,6 @@ export const likePost = async (req, res) => {
     await user.save();
 
     const isLikedByCurrentUser = post.likes.includes(user._id);
-    
 
     // Respond with updated data
     res.status(200).json({
@@ -214,5 +213,22 @@ export const getProfile = async (req, res) => {
     res.json({ user });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const postOpen = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await postModel.findById(id).populate("user").select("-password");
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${post.postData}`;
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
   }
 };
