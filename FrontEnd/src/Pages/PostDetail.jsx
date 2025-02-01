@@ -16,55 +16,52 @@ function PostDetail() {
   const [post, setPost] = useState(null);
   const [userData, setUserData] = useState(null);
   const [comments, setComments] = useState([]);
-  const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(UserDataContext);
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const formatCommentTime = (createdAt) => {
     const now = new Date();
     const commentDate = new Date(createdAt);
-
-    // Calculate the difference in milliseconds
     const diff = now - commentDate;
-
-    // Convert to days, hours, and minutes
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-    // If the difference is more than 24 hours, show "X days"
     if (days > 0) {
       return `${days} day${days > 1 ? "s" : ""} ago`;
     }
-
-    // If less than 24 hours, show hours and minutes
     return `${hours}h ${minutes}m ago`;
   };
 
-  // Fetching comments for the post
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await fetch(
           `${import.meta.env.VITE_BASE_URL}/c/${id}`,
-          { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+          {
+            headers: { Authorization: token ? `Bearer ${token}` : "" },
+          }
         );
         const data = await response.json();
-        setComments(data);
+        if (Array.isArray(data)) {
+          const commentsWithLikes = data.map((comment) => ({
+            ...comment,
+            isLikedByCurrentUser: comment.likes.includes(userId),
+          }));
+          setComments(commentsWithLikes);
+        }
       } catch (error) {
         console.error("Error fetching comments:", error);
       }
     };
+    if (post) fetchComments();
+  }, [post, id, token, userId]);
 
-    if (post) {
-      fetchComments();
-    }
-  }, [post, id, token]);
-
-  // Liking a comment
   const likeComment = async (commentId) => {
     try {
-      await axios.put(
+      const response = await axios.put(
         `${import.meta.env.VITE_BASE_URL}/c/like/${commentId}`,
         {},
         {
@@ -73,22 +70,28 @@ function PostDetail() {
           },
         }
       );
+
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === commentId
-            ? { ...comment, likes: comment.likes + 1 }
+            ? {
+                ...comment,
+                likes: comment.isLikedByCurrentUser
+                  ? comment.likes.filter((id) => id !== userId) // Remove like (Unlike)
+                  : [...comment.likes, userId], // Add like
+                isLikedByCurrentUser: !comment.isLikedByCurrentUser, // Toggle state
+              }
             : comment
         )
       );
     } catch (error) {
-        showNotification("Error liking comment:", error)
+      console.error("Error liking comment:", error);
     }
   };
 
-  // Liking a reply
   const likeReply = async (commentId, replyId) => {
     try {
-      await axios.put(
+      const response = await axios.put(
         `${import.meta.env.VITE_BASE_URL}/c/reply/like/${commentId}/${replyId}`,
         {},
         {
@@ -97,37 +100,77 @@ function PostDetail() {
           },
         }
       );
-      // Update reply like count here if needed
+
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment._id === commentId
+            ? {
+                ...comment,
+                replies: comment.replies.map((reply) =>
+                  reply._id === replyId
+                    ? {
+                        ...reply,
+                        likes: reply.isLikedByCurrentUser
+                          ? reply.likes.filter((id) => id !== userId) // Unlike
+                          : [...reply.likes, userId], // Like
+                        isLikedByCurrentUser: !reply.isLikedByCurrentUser, // Toggle
+                      }
+                    : reply
+                ),
+              }
+            : comment
+        )
+      );
     } catch (error) {
-        showNotification("Error liking reply:", error)
-    //   console.error("Error liking reply:", error);
+      console.error("Error liking reply:", error);
     }
   };
 
-  // Adding a new comment
   const addComment = async (content) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/c/${id}`,
-        { text: content }, // Send `text` instead of `content`
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        }
-      );
+      let endpoint = `${import.meta.env.VITE_BASE_URL}/c/${id}`;
+      let body = { text: content };
 
-      // Update the comments state with the new comment from the response
-      if (response.data.newComment) {
+      if (replyingTo) {
+        endpoint = `${import.meta.env.VITE_BASE_URL}/c/reply/${replyingTo._id}`;
+        body = { text: content };
+      }
+
+      const response = await axios.post(endpoint, body, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+
+      if (response.data.newComment || response.data.newReply) {
         setComments((prevComments) => {
-          const updatedComments = [response.data.newComment, ...prevComments];
-        //   console.log("Updated Comments:", updatedComments);
-          return updatedComments;
+          if (replyingTo) {
+            const updatedComments = prevComments.map((comment) =>
+              comment._id === replyingTo._id
+                ? {
+                    ...comment,
+                    replies: [
+                      ...(comment.replies || []),
+                      response.data.newReply,
+                    ],
+                  }
+                : comment
+            );
+            return updatedComments;
+          } else {
+            return [response.data.newComment, ...prevComments];
+          }
         });
+
+        setReplyingTo(null);
+        showNotification(
+          replyingTo
+            ? "Reply added successfully!"
+            : "Comment added successfully!"
+        );
       }
     } catch (error) {
-        showNotification("Error adding comment:", error)
-    //   console.error("Error adding comment:", error);
+      showNotification("Error adding comment:", error);
     }
   };
 
@@ -156,14 +199,11 @@ function PostDetail() {
       );
       const data = await response.json();
       setUserData(data.user);
-      setFollowers(data.user.followers);
       setPost(data);
     };
 
     fetchPost();
   }, [id]);
-
-  //   console.log(userData);
 
   if (!post) {
     return <PostDetailSkeleton></PostDetailSkeleton>;
@@ -173,7 +213,6 @@ function PostDetail() {
     <>
       <div className="mt-28">
         <div className="flex flex-col md:flex-row rounded-xl lg:mx-60 items-stretch px-5 text-white">
-          {/* Image Section */}
           <div className="w-full md:w-[45%] bg-gray-900 rounded-xl p-5 mr-3 flex items-center justify-center">
             <img
               className="w-full max-h-[80vh] object-contain rounded-xl"
@@ -182,9 +221,7 @@ function PostDetail() {
             />
           </div>
 
-          {/* Content Section */}
           <div className="flex-grow bg-gray-900 rounded-xl p-5 flex flex-col mt-4 md:mt-0">
-            {/* Profile Section */}
             <div className="flex items-center space-x-4">
               <Link to={`/profile/${userData.username}`}>
                 <img
@@ -207,7 +244,6 @@ function PostDetail() {
               </div>
             </div>
 
-            {/* Post Title and Description */}
             <div className="mt-6">
               <h2 className="text-2xl font-bold">{post.title}</h2>
               <p className="text-gray-300 mt-2 leading-relaxed">
@@ -215,7 +251,6 @@ function PostDetail() {
               </p>
             </div>
 
-            {/* Tags */}
             <div className="flex flex-wrap gap-2 mt-4">
               {post?.tags &&
                 post.tags.length > 0 &&
@@ -229,7 +264,6 @@ function PostDetail() {
                 ))}
             </div>
 
-            {/* Comments Section */}
             <div className="mt-6 flex-1 flex flex-col">
               <div className="flex items-center mb-4 p-2 rounded-lg bg-gray-800">
                 <div className="flex items-center bg-gray-900 px-4 py-2 rounded-full space-x-2 mr-3">
@@ -254,7 +288,6 @@ function PostDetail() {
                 </div>
               </div>
 
-              {/* Comments List */}
               <div
                 className="space-y-4 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 pr-2"
                 style={{ maxHeight: "300px" }}
@@ -264,7 +297,6 @@ function PostDetail() {
                     key={comment._id}
                     className="flex items-start space-x-4 p-4 bg-gray-800 hover:bg-gray-950/50 transition-colors rounded-lg"
                   >
-                    {/* Parent Comment */}
                     <img
                       className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
                       src={
@@ -275,7 +307,18 @@ function PostDetail() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         <h4 className="text-sm font-semibold text-gray-100">
-                          {comment.user?.name || "Anonymous"}
+                          {/* {comment.user?.name || "Anonymous"} */}
+                          {comment.user?.name
+                            .split(" ") // Split name into words
+                            .map((word, index) =>
+                              index === 0
+                                ? word
+                                : index === 1
+                                ? `${word[0]}.`
+                                : ""
+                            ) // First word as is, second word as first letter + dot
+                            .join(" ") // Join words with space
+                            .trim()}
                         </h4>
                         <span className="text-xs text-gray-400">
                           • {formatCommentTime(comment.createdAt)}
@@ -287,19 +330,26 @@ function PostDetail() {
                       <div className="flex items-center space-x-4 mt-2">
                         <button
                           onClick={() => likeComment(comment._id)}
-                          className="text-sm text-red-400 hover:text-gray-200 transition-colors"
+                          className={`text-sm ${
+                            comment.isLikedByCurrentUser
+                              ? "text-red-400"
+                              : "text-gray-400"
+                          } hover:text-gray-200 transition-colors`}
                         >
-                          Like{" "}
+                          {comment.isLikedByCurrentUser ? "Unlike" : "Like"}{" "}
                           <span className="pl-1 text-white font-semibold">
-                            {comment.likes?.length || 0}
+                            {comment.likes.length}
                           </span>
                         </button>
-                        <button className="text-sm text-gray-400 hover:text-gray-200 transition-colors">
+
+                        <button
+                          onClick={() => setReplyingTo(comment)}
+                          className="text-sm text-gray-400 hover:text-gray-200 transition-colors"
+                        >
                           Reply
                         </button>
                       </div>
 
-                      {/* Nested Replies Section */}
                       {comment.replies && comment.replies.length > 0 && (
                         <div className="mt-4 pl-10 border-l border-gray-700">
                           {comment.replies.map((reply) => (
@@ -318,7 +368,17 @@ function PostDetail() {
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2 mb-1">
                                   <h4 className="text-sm font-semibold text-gray-100">
-                                    {reply.user?.name || "Anonymous"}
+                                    {reply.user?.name
+                                      .split(" ") // Split name into words
+                                      .map((word, index) =>
+                                        index === 0
+                                          ? word
+                                          : index === 1
+                                          ? `${word[0]}.`
+                                          : ""
+                                      ) // First word as is, second word as first letter + dot
+                                      .join(" ") // Join words with space
+                                      .trim()}
                                   </h4>
                                   <span className="text-xs text-gray-400">
                                     • {formatCommentTime(reply.createdAt)}
@@ -332,9 +392,10 @@ function PostDetail() {
                                     onClick={() =>
                                       likeReply(comment._id, reply._id)
                                     }
+                                    disabled={!token}
                                     className="text-sm text-red-400 hover:text-gray-200 transition-colors"
                                   >
-                                    Like{" "}
+                                    Like
                                     <span className="pl-1 text-white font-semibold">
                                       {reply.likes?.length || 0}
                                     </span>
@@ -350,12 +411,13 @@ function PostDetail() {
                 ))}
               </div>
 
-              {/* Add Comment Section */}
               <div className="mt-4 flex items-center space-x-2">
                 <input
                   type="text"
                   className="flex-grow px-4 py-2 border border-gray-700 bg-gray-800 rounded-lg text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Write a comment..."
+                  placeholder={
+                    replyingTo ? "Typing your reply..." : "Write a comment..."
+                  }
                   onKeyPress={(e) => {
                     if (e.key === "Enter" && e.target.value.trim()) {
                       addComment(e.target.value.trim());
@@ -396,9 +458,9 @@ function PostDetail() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {allPosts
-                  .filter((post) => post._id !== id) // Jo ID params mai hai us post ko hata do
-                  .sort(() => Math.random() - 0.5) // Random shuffle
-                  .slice(0, 12) // Sirf pehle 12 posts select karna
+                  .filter((post) => post._id !== id)
+                  .sort(() => Math.random() - 0.5)
+                  .slice(0, 12)
                   .map((post) => (
                     <PostCard posts={post} key={post._id} />
                   ))}

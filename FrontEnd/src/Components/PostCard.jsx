@@ -5,6 +5,8 @@ import "../index.css";
 import { UserDataContext } from "../context/UserContext";
 
 function PostCard({ posts }) {
+  // console.log(posts.comments);
+  
   const { user } = useContext(UserDataContext);
 
   return (
@@ -75,7 +77,7 @@ function PostCard({ posts }) {
               <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 cursor-pointer">
                 <i className="ri-chat-1-line text-gray-400 ri-lg"></i>
                 <span className="text-white font-semibold text-sm sm:text-base">
-                  2.1k
+                  {posts.comments.length}
                 </span>
               </div>
             </Link>

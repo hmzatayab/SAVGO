@@ -1,4 +1,5 @@
 import Comment from "../models/comment.model.js";
+import { isValidObjectId } from 'mongoose';
 import Post from "../models/post.model.js";
 import mongoose from "mongoose";
 
@@ -69,8 +70,13 @@ export const likeComment = async (req, res) => {
     const { commentId } = req.params;
     const userId = req.user._id;
 
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!isValidObjectId(commentId)) return res.status(400).json({ message: "Invalid comment ID" });
+
     const comment = await Comment.findById(commentId);
     if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    if (!comment.likes) comment.likes = [];
 
     const alreadyLiked = comment.likes.includes(userId);
 
