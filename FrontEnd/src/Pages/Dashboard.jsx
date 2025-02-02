@@ -13,7 +13,6 @@ const ProfilePage = () => {
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  console.log(user._id);
 
   // Function to open the upload drawer
   const openDrawer = () => {
@@ -102,24 +101,43 @@ const ProfilePage = () => {
           </div>
 
           {/* Settings Icon */}
-          <div className="flex justify-center lg:justify-end">
-            <Link
-              onClick={openDrawer}
-              state={{ from: "dashboard" }}
-              className="mx-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
-            >
-              Upload Image
-            </Link>
-            <UploadDrawer open={isDrawerOpen} onClose={closeDrawer} />
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            {/* Upload Image Button */}
+            <div className="flex justify-center lg:justify-end">
+              <Link
+                onClick={openDrawer}
+                state={{ from: "dashboard" }}
+                className="mx-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold 
+                 px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+              >
+                Upload Image
+              </Link>
+              <UploadDrawer open={isDrawerOpen} onClose={closeDrawer} />
+            </div>
+
+            {/* Logout Button */}
+            <div className="flex justify-center lg:justify-end">
+              <Link
+                to={"/logout"}
+                className="mx-2 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold 
+                 px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+              >
+                Logout
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Stats Section */}
         <div className="grid grid-cols-3 gap-6">
-          <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-            <h2 className="text-xl font-bold text-white">{followers.length}</h2>
-            <p className="text-gray-400">Followers</p>
-          </div>
+          <Link to={`/followers/${user._id}`}>
+            <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
+              <h2 className="text-xl font-bold text-white">
+                {followers.length}
+              </h2>
+              <p className="text-gray-400">Followers</p>
+            </div>
+          </Link>
           <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
             <h2 className="text-xl font-bold text-white">{following.length}</h2>
             <p className="text-gray-400">Following</p>
@@ -132,7 +150,12 @@ const ProfilePage = () => {
 
         {/* User Posts Section */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-4">Your Post's</h2>
+          <div className="relative mb-8">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+              Your Post's
+            </h2>
+            <div className="absolute left-0 top-full mt-2 h-1 w-16 bg-gradient-to-r from-indigo-500 to-pink-500 rounded"></div>
+          </div>
           {loading ? (
             <Skeleton />
           ) : posts.length === 0 ? (
@@ -150,12 +173,12 @@ const ProfilePage = () => {
                   {/* Post Image */}
                   <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
                     <Link to={`/post/${post._id}`}>
-                    <img
-                      className="absolute top-0 left-0 w-full h-full object-cover"
-                      key={post._id}
-                      src={post.imageURL}
-                      alt="Post Image"
-                    />
+                      <img
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                        key={post._id}
+                        src={post.imageURL}
+                        alt="Post Image"
+                      />
                     </Link>
                   </div>
 
@@ -184,7 +207,7 @@ const ProfilePage = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
+                    {/* <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
                       <div className="flex items-center space-x-2 text-gray-400">
                         <LikeButton
                           postId={post._id}
@@ -195,6 +218,28 @@ const ProfilePage = () => {
                         />
                       </div>
                       <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
+                    </div> */}
+                    <div className="flex items-center justify-between mt-4 sm:mt-0 w-full sm:w-auto">
+                      {/* Like Button */}
+                      <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 mr-2 ">
+                        <LikeButton
+                          postId={post._id}
+                          initialLikes={post.likes.length}
+                          isInitiallyLiked={
+                            user?._id ? post.likes.includes(user._id) : false
+                          }
+                        />
+                      </div>
+
+                      {/* Comment Icon */}
+                      <Link to={`/post/${post._id}`}>
+                        <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 cursor-pointer">
+                          <i className="ri-chat-1-line text-gray-400 ri-lg"></i>
+                          <span className="text-white font-semibold text-sm sm:text-base">
+                            {post.comments.length}
+                          </span>
+                        </div>
+                      </Link>
                     </div>
                   </div>
                 </div>

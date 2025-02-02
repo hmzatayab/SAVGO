@@ -80,7 +80,7 @@ export const getUserFollowers = async (req, res) => {
 
     const user = await userModel
       .findById(userId)
-      .populate("followers", "name email"); // Populate followers
+      .populate("followers", "name email username posts followers image"); // Populate followers
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -182,12 +182,28 @@ export const getWishlist = async (req, res) => {
   try {
     const user = await userModel
       .findById(req.user.id)
-      .populate("wishlist")
+      .populate({
+        path: "wishlist",
+        populate: {
+          path: "user", // Wishlist ke andar jo user hai usko populate karega
+          select: "username email image name followers", // Jo fields chahiye unko select karein
+        },
+      })
       .select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+
+    // User ke wishlist ke andar user image aur post image URL modify karna
+    user.wishlist = user.wishlist.map((item) => {
+      // Post image URL
+      if (item.postData) {
+        item.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${item.postData}`;
+      }
+
+      return item;
+    });
 
     return res.status(200).json({ wishlist: user.wishlist });
   } catch (error) {

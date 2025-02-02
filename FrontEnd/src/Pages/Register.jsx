@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useNotification } from "../context/NotificationContext";
 import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
@@ -7,15 +7,24 @@ import PasswordStrengthMeter from "../Components/PasswordMeter";
 import AnimationWrapper from "../Components/Animations";
 
 const RegisterPage = () => {
-  const [username, setUsername] = React.useState("");
+  const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [Image, setImage] = useState("");
+  const [image, setImage] = useState("");
   const [errors, setErrors] = useState({});
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const { user } = useContext(UserDataContext);
+  const location = useLocation();
+
+  // Set email from home page if available
+  useEffect(() => {
+    if (location.state?.email) {
+      setEmail(location.state.email); // Set email from home page if available
+    }
+  }, [location.state]); // Only run this effect when location.state changes
+
 
   const validateInputs = () => {
     let errors = {};
@@ -50,7 +59,7 @@ const RegisterPage = () => {
         name,
         email,
         password,
-        image: Image,
+        image,
       };
 
       const response = await axios.post(
@@ -87,11 +96,13 @@ const RegisterPage = () => {
               <input
                 key={field}
                 type={field === "password" ? "password" : "text"}
-                value={eval(field)}
+                value={field === "email" ? email : eval(field)} // Set email or other fields
                 onChange={(e) =>
-                  eval(`set${field.charAt(0).toUpperCase() + field.slice(1)}`)(
-                    e.target.value
-                  )
+                  field === "email"
+                    ? setEmail(e.target.value)
+                    : eval(`set${field.charAt(0).toUpperCase() + field.slice(1)}`)(
+                        e.target.value
+                      )
                 }
                 placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                 className={`w-full px-4 py-2 bg-gray-800 text-white rounded-lg outline-none placeholder-gray-400 transition-all duration-300 ${

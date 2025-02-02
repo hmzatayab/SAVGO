@@ -17,6 +17,7 @@ import Pricing from "./Pages/Pricing.jsx";
 import "react-toastify/dist/ReactToastify.css";
 import Wishlist from "./Pages/Wishlist.jsx";
 import PostDetail from "./Pages/PostDetail.jsx";
+import Followers from "./Pages/Followers.jsx";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
         <Route path="/chat" element={<UserProtectWrapper><ChatPage/></UserProtectWrapper>}/>
+        <Route path="/followers/:id" element={<Followers></Followers>}/>
         <Route path="/wishlist" element={<UserProtectWrapper><Wishlist/></UserProtectWrapper>}/>
         <Route path="/pricing" element={<Pricing/>}/>
       </Routes>

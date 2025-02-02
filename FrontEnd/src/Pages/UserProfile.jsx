@@ -19,13 +19,13 @@ const ProfilePage = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    if(token){
-      if(user.username === id){
-        return navigate("/dashboard")
+  useEffect(() => {
+    if (token) {
+      if (user.username === id) {
+        return navigate("/dashboard");
       }
     }
-  })
+  });
 
   // Follow/Unfollow Logic
   const handleFollow = async () => {
@@ -39,7 +39,6 @@ const ProfilePage = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-    
       if (response.status === 200) {
         const { followers: updatedFollowers } = response.data.user;
         setFollowers(updatedFollowers);
@@ -61,7 +60,6 @@ const ProfilePage = () => {
   //   }
   // }, [followers, user._id]);
 
-
   useEffect(() => {
     if (token && user) {
       const loggedInUserId = user._id;
@@ -69,7 +67,6 @@ const ProfilePage = () => {
       setIsFollowing(isUserFollowing);
     }
   }, [followers, user, token]);
-
 
   // Fetch user profile data on component mount
   useEffect(() => {
@@ -142,10 +139,12 @@ const ProfilePage = () => {
 
       {/* Stats Section */}
       <div className="grid grid-cols-3 gap-6">
-        <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-          <h2 className="text-xl font-bold text-white">{followers.length}</h2>
-          <p className="text-gray-400">Followers</p>
-        </div>
+        <Link to={`/followers/${userData._id}`}>
+          <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
+            <h2 className="text-xl font-bold text-white">{followers.length}</h2>
+            <p className="text-gray-400">Followers</p>
+          </div>
+        </Link>
         <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
           <h2 className="text-xl font-bold text-white">{following.length}</h2>
           <p className="text-gray-400">Following</p>
@@ -158,7 +157,12 @@ const ProfilePage = () => {
 
       {/* User Posts Section */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-4">All Post's</h2>
+        <div className="relative mb-8">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+            All Post's
+          </h2>
+          <div className="absolute left-0 top-full mt-2 h-1 w-16 bg-gradient-to-r from-indigo-500 to-pink-500 rounded"></div>
+        </div>
         {loading ? (
           <Skeleton />
         ) : posts.length === 0 ? (
@@ -171,12 +175,14 @@ const ProfilePage = () => {
                 className="bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden p-4 transition duration-500"
               >
                 <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
-                  <img
-                    className="absolute top-0 left-0 w-full h-full object-cover"
-                    key={post._id}
-                    src={post.imageURL}
-                    alt="Post Image"
-                  />
+                  <Link to={`/post/${post._id}`}>
+                    <img
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                      key={post._id}
+                      src={post.imageURL}
+                      alt="Post Image"
+                    />
+                  </Link>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
                   <div className="flex items-center space-x-4">
@@ -187,9 +193,17 @@ const ProfilePage = () => {
                     />
                     <div>
                       <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
-                        {userData.name.length > 5
-                          ? userData.name.slice(0, 5) + "..."
-                          : userData.name}
+                        {userData.name
+                          .split(" ") // Split name into words
+                          .map((word, index) =>
+                            index === 0
+                              ? word
+                              : index === 1
+                              ? `${word[0]}.`
+                              : ""
+                          ) // First word as is, second word as first letter + dot
+                          .join(" ") // Join words with space
+                          .trim()}
                       </h3>
                       <p className="text-gray-400 text-xs sm:text-sm italic">
                         @
@@ -199,13 +213,35 @@ const ProfilePage = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
+                  {/* <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
                     <LikeButton
                       postId={post._id}
                       initialLikes={post.likes.length}
                       isInitiallyLiked={post.likes.includes(post.user)}
                     />
                     <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
+                  </div> */}
+                  <div className="flex items-center justify-between mt-4 sm:mt-0 w-full sm:w-auto">
+                    {/* Like Button */}
+                    <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 mr-2 ">
+                      <LikeButton
+                        postId={post._id}
+                        initialLikes={post.likes.length}
+                        isInitiallyLiked={
+                          user?._id ? post.likes.includes(user._id) : false
+                        }
+                      />
+                    </div>
+
+                    {/* Comment Icon */}
+                    <Link to={`/post/${post._id}`}>
+                      <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 cursor-pointer">
+                        <i className="ri-chat-1-line text-gray-400 ri-lg"></i>
+                        <span className="text-white font-semibold text-sm sm:text-base">
+                          {post.comments.length}
+                        </span>
+                      </div>
+                    </Link>
                   </div>
                 </div>
               </div>

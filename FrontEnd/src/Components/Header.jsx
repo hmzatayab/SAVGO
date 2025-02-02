@@ -19,11 +19,7 @@ export const Header = () => {
             to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <img
-              src="../../public/logo.png"
-              alt="Logo"
-              className="w-36"
-            />
+            <img src="../../public/logo.png" alt="Logo" className="w-36" />
           </Link>
 
           {/* Desktop Menu */}
@@ -40,46 +36,93 @@ export const Header = () => {
           </div>
 
           {token ? (
-            <div className="flex justify-end space-x-4 lg:w-[176px]">
-              <Dropdown
-                label={<Avatar alt="User settings" img={user.image} rounded />}
-                arrowIcon={false}
-                inline
-              >
-                <Dropdown.Header className="w-40">
-                  <span className="block text-base font-bold">
-                    {user.name.length > 5
-                      ? user.name.slice(0, 5) + "..."
-                      : user.name}
-                  </span>
-                  <span className="block truncate text-sm font-normal italic">
-                    @
-                    {user.username.length > 15
-                      ? user.username.slice(0, 15) + "..."
-                      : user.username}
-                  </span>
-                </Dropdown.Header>
-                <Dropdown.Item>
-                  <Link to={"/dashboard"}>Profile</Link>
-                </Dropdown.Item>
-                <Dropdown.Item>Settings</Dropdown.Item>
-                <Dropdown.Item>Earnings</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item>
-                  <Link to={"/logout"}>Sign out</Link>
-                </Dropdown.Item>
-              </Dropdown>
-              {/* Mobile Menu Button */}
-              <div className="flex justify-center items-center">
+            // <div className="flex justify-end space-x-4 lg:w-[176px]">
+            //   <Dropdown
+            //     label={<Avatar alt="User settings" img={user.image} rounded />}
+            //     arrowIcon={false}
+            //     inline
+            //   >
+            //     <Dropdown.Header className="w-40">
+            //       <span className="block text-base font-bold">
+            //         {user.name.length > 5
+            //           ? user.name.slice(0, 5) + "..."
+            //           : user.name}
+            //       </span>
+            //       <span className="block truncate text-sm font-normal italic">
+            //         @
+            //         {user.username.length > 15
+            //           ? user.username.slice(0, 15) + "..."
+            //           : user.username}
+            //       </span>
+            //     </Dropdown.Header>
+            //     <Dropdown.Item>
+            //       <Link to={"/dashboard"}>Profile</Link>
+            //     </Dropdown.Item>
+            //     <Dropdown.Item>Settings</Dropdown.Item>
+            //     <Dropdown.Item>Earnings</Dropdown.Item>
+            //     <Dropdown.Divider />
+            //     <Dropdown.Item>
+            //       <Link to={"/logout"}>Sign out</Link>
+            //     </Dropdown.Item>
+            //   </Dropdown>
+            //   {/* Mobile Menu Button */}
+            //   <div className="flex justify-center items-center">
+            //     <button
+            //       className="lg:hidden text-white bg-gray-700 p-2 rounded-lg"
+            //       onClick={toggleDrawer}
+            //     >
+            //       <i className="ri-menu-line text-2xl"></i>
+            //     </button>
+            //     <Link to={"/logout"} className="hidden sm:flex lg:block">
+            //       <i className="ri-logout-circle-r-line text-xl text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"></i>
+            //     </Link>
+            //   </div>
+            // </div>
+            <div className="flex">
+              <Link to={"/dashboard"}>
+                <div className="flex flex-row items-center bg-gray-800 p-2 rounded-lg w-[120px] md:w-[140px] lg:w-[160px]">
+                  {/* Profile Image with Gradient Border */}
+                  <div className="relative w-10 h-10">
+                    <div className="w-full h-full rounded-lg p-[2px] bg-gradient-to-r from-yellow-500 to-orange-500">
+                      <img
+                        src={user.image}
+                        alt="User Avatar"
+                        className="w-full h-full object-cover rounded-lg pl-[1px]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Follower Count, Icon, and Username */}
+                  <div className="flex flex-col ml-2">
+                    {/* Username */}
+                    <span className="text-gray-300 text-xs mt-[2px] font-medium mb-1">
+                      {user.name
+                        .split(" ") // Split name into words
+                        .map((word, index) =>
+                          index === 0 ? word : index === 1 ? `${word[0]}.` : ""
+                        ) // First word as is, second word as first letter + dot
+                        .join(" ") // Join words with space
+                        .trim()}
+                    </span>
+
+                    {/* Follower Count and Icon */}
+                    <div className="flex items-center">
+                      <i className="ri-user-fill text-gray-400 text-sm"></i>
+                      <span className="text-white text-sm font-semibold">
+                        {user.followers.length || 0}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              <div className="flex justify-center items-center ml-2">
                 <button
                   className="lg:hidden text-white bg-gray-700 p-2 rounded-lg"
                   onClick={toggleDrawer}
                 >
                   <i className="ri-menu-line text-2xl"></i>
                 </button>
-                <Link to={"/logout"} className="hidden sm:flex lg:block">
-                  <i className="ri-logout-circle-r-line text-xl text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"></i>
-                </Link>
               </div>
             </div>
           ) : (

@@ -20,6 +20,9 @@ function PostDetail() {
   const { user } = useContext(UserDataContext);
   const [replyingTo, setReplyingTo] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [postsToDisplay, setPostsToDisplay] = useState([]);
+
+  // console.log(comments[1].replies);
 
   const formatCommentTime = (createdAt) => {
     const now = new Date();
@@ -36,6 +39,34 @@ function PostDetail() {
   };
 
   useEffect(() => {
+    if (post && allPosts.length > 0) {
+      // Filter matching posts
+      const matchingPosts = allPosts.filter(
+        (p) =>
+          p._id !== post._id && p.tags.some((tag) => post.tags.includes(tag))
+      );
+
+      // Check if matching posts exist
+      if (matchingPosts.length > 0) {
+        setPostsToDisplay(matchingPosts);
+      } else {
+        // No matches found, show random posts
+        const randomPosts = allPosts
+          .filter((p) => p._id !== post._id)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 12);
+        setPostsToDisplay(randomPosts);
+      }
+    }
+  }, [post, allPosts]); // Trigger when post or allPosts change
+
+  useEffect(() => {
+    if (user?._id) {
+      setUserId(user._id);
+    }
+  }, [user]);
+
+  useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await fetch(
@@ -46,10 +77,13 @@ function PostDetail() {
         );
         const data = await response.json();
         if (Array.isArray(data)) {
-          const commentsWithLikes = data.map((comment) => ({
-            ...comment,
-            isLikedByCurrentUser: comment.likes.includes(userId),
-          }));
+          const commentsWithLikes = data.map((comment) => {
+            const isLikedByCurrentUser = comment.likes.includes(userId);
+            return {
+              ...comment,
+              isLikedByCurrentUser,
+            };
+          });
           setComments(commentsWithLikes);
         }
       } catch (error) {
@@ -57,7 +91,7 @@ function PostDetail() {
       }
     };
     if (post) fetchComments();
-  }, [post, id, token, userId]);
+  }, [post, id, token, userId]); // Re-fetch comments when userId changes
 
   const likeComment = async (commentId) => {
     try {
@@ -71,14 +105,15 @@ function PostDetail() {
         }
       );
 
+      // Update the comment's likes and toggle like state for current user
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === commentId
             ? {
                 ...comment,
                 likes: comment.isLikedByCurrentUser
-                  ? comment.likes.filter((id) => id !== userId) // Remove like (Unlike)
-                  : [...comment.likes, userId], // Add like
+                  ? comment.likes.filter((id) => id !== userId) // Unlike
+                  : [...comment.likes, userId], // Like
                 isLikedByCurrentUser: !comment.isLikedByCurrentUser, // Toggle state
               }
             : comment
@@ -101,6 +136,7 @@ function PostDetail() {
         }
       );
 
+      // Update the reply's likes and toggle like state for current user
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === commentId
@@ -113,7 +149,7 @@ function PostDetail() {
                         likes: reply.isLikedByCurrentUser
                           ? reply.likes.filter((id) => id !== userId) // Unlike
                           : [...reply.likes, userId], // Like
-                        isLikedByCurrentUser: !reply.isLikedByCurrentUser, // Toggle
+                        isLikedByCurrentUser: !reply.isLikedByCurrentUser, // Toggle state
                       }
                     : reply
                 ),
@@ -134,6 +170,12 @@ function PostDetail() {
       if (replyingTo) {
         endpoint = `${import.meta.env.VITE_BASE_URL}/c/reply/${replyingTo._id}`;
         body = { text: content };
+      }
+
+      if (!token) {
+        // If user is not logged in, show notification
+        showNotification("Please log in first");
+        return; // Stop further execution
       }
 
       const response = await axios.post(endpoint, body, {
@@ -211,7 +253,7 @@ function PostDetail() {
 
   return (
     <>
-      <div className="mt-28">
+      <div className="mt-32">
         <div className="flex flex-col md:flex-row rounded-xl lg:mx-60 items-stretch px-5 text-white">
           <div className="w-full md:w-[45%] bg-gray-900 rounded-xl p-5 mr-3 flex items-center justify-center">
             <img
@@ -297,50 +339,70 @@ function PostDetail() {
                     key={comment._id}
                     className="flex items-start space-x-4 p-4 bg-gray-800 hover:bg-gray-950/50 transition-colors rounded-lg"
                   >
-                    <img
-                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
-                      src={
-                        comment.user?.image || "https://via.placeholder.com/150"
-                      }
-                      alt="Commenter"
-                    />
+                    <Link to={`/profile/${comment.user.username}`}>
+                      <img
+                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
+                        src={
+                          comment.user?.image ||
+                          "https://via.placeholder.com/150"
+                        }
+                        alt="Commenter"
+                      />
+                    </Link>
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         <h4 className="text-sm font-semibold text-gray-100">
-                          {/* {comment.user?.name || "Anonymous"} */}
-                          {comment.user?.name
-                            .split(" ") // Split name into words
-                            .map((word, index) =>
-                              index === 0
-                                ? word
-                                : index === 1
-                                ? `${word[0]}.`
-                                : ""
-                            ) // First word as is, second word as first letter + dot
-                            .join(" ") // Join words with space
-                            .trim()}
+                          {
+                            comment.user?.name
+                              ? comment.user.name
+                                  .split(" ") // Split name into words
+                                  .map((word, index) =>
+                                    index === 0
+                                      ? word
+                                      : index === 1
+                                      ? `${word[0]}.`
+                                      : ""
+                                  ) // First word as is, second word as first letter + dot
+                                  .join(" ") // Join words with space
+                                  .trim()
+                              : "Anonymous" // Fallback if name is undefined
+                          }
                         </h4>
                         <span className="text-xs text-gray-400">
                           • {formatCommentTime(comment.createdAt)}
                         </span>
                       </div>
+
                       <p className="text-sm text-gray-300 leading-relaxed">
                         {comment.text}
                       </p>
                       <div className="flex items-center space-x-4 mt-2">
-                        <button
-                          onClick={() => likeComment(comment._id)}
-                          className={`text-sm ${
-                            comment.isLikedByCurrentUser
-                              ? "text-red-400"
-                              : "text-gray-400"
-                          } hover:text-gray-200 transition-colors`}
-                        >
-                          {comment.isLikedByCurrentUser ? "Unlike" : "Like"}{" "}
-                          <span className="pl-1 text-white font-semibold">
-                            {comment.likes.length}
-                          </span>
-                        </button>
+                        {/* <button
+  onClick={() => {
+    if (!token) {
+      showNotification("Please login to like comments.");
+      return;
+    }
+    likeComment(comment._id);
+  }}
+  className={`text-sm ${
+    !token
+      ? "text-red-400" // Always red for logged-out users
+      : comment.isLikedByCurrentUser
+      ? "text-gray-400" // Gray for "Unlike" when logged in
+      : "text-red-400" // Red for "Like" when logged in
+  } hover:text-gray-200 transition-colors`}
+  disabled={!token} // Disable button if user is logged out
+>
+  {!token
+    ? "Like" // Always "Like" for logged-out users
+    : comment.isLikedByCurrentUser
+    ? "Unlike"
+    : "Like"}{" "}
+  <span className="pl-1 text-white font-semibold">
+    {comment.likes.length}
+  </span>
+</button> */}
 
                         <button
                           onClick={() => setReplyingTo(comment)}
@@ -357,14 +419,16 @@ function PostDetail() {
                               key={reply._id}
                               className="flex items-start space-x-4 mt-4"
                             >
-                              <img
-                                className="w-10 h-10 rounded-full object-cover border-2 border-gray-700"
-                                src={
-                                  reply.user?.image ||
-                                  "https://via.placeholder.com/150"
-                                }
-                                alt="Reply User"
-                              />
+                              <Link to={`/profile/${reply.user.username}`}>
+                                <img
+                                  className="w-10 h-10 rounded-full object-cover border-2 border-gray-700"
+                                  src={
+                                    reply.user?.image ||
+                                    "https://via.placeholder.com/150"
+                                  }
+                                  alt="Reply User"
+                                />
+                              </Link>
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2 mb-1">
                                   <h4 className="text-sm font-semibold text-gray-100">
@@ -388,7 +452,7 @@ function PostDetail() {
                                   {reply.text}
                                 </p>
                                 <div className="flex items-center space-x-4 mt-2">
-                                  <button
+                                  {/* <button
                                     onClick={() =>
                                       likeReply(comment._id, reply._id)
                                     }
@@ -399,7 +463,7 @@ function PostDetail() {
                                     <span className="pl-1 text-white font-semibold">
                                       {reply.likes?.length || 0}
                                     </span>
-                                  </button>
+                                  </button> */}
                                 </div>
                               </div>
                             </div>
@@ -456,14 +520,20 @@ function PostDetail() {
             ) : allPosts.length === 0 ? (
               <p className="text-gray-400">No posts available.</p>
             ) : (
+              // <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              //   {allPosts
+              //     .filter((post) => post._id !== id)
+              //     .sort(() => Math.random() - 0.5)
+              //     .slice(0, 12)
+              //     .map((post) => (
+              //       <PostCard posts={post} key={post._id} />
+              //     ))}
+              // </div>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {allPosts
-                  .filter((post) => post._id !== id)
-                  .sort(() => Math.random() - 0.5)
-                  .slice(0, 12)
-                  .map((post) => (
-                    <PostCard posts={post} key={post._id} />
-                  ))}
+                {postsToDisplay.map((p) => (
+                  <PostCard posts={p} key={p._id} />
+                ))}
               </div>
             )}
           </div>

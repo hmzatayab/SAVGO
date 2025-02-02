@@ -11,6 +11,8 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [email, setEmail] = useState("");
+
 
   // Function to open the upload drawer
   const openDrawer = () => {
@@ -45,8 +47,6 @@ function Home() {
     .sort((a, b) => b.likes.length - a.likes.length)
     .slice(0, 4);
 
-
-
   // Show the button when scrolled down
   const toggleVisibility = () => {
     if (window.scrollY > 300) {
@@ -79,7 +79,7 @@ function Home() {
         ease: [0.42, 0, 0.58, 1], // Custom cubic-bezier easing
       }}
     >
-      <div className="mt-28 p-5">
+      <div className="mt-32 p-5">
         {/* Upload Section */}
         {token ? (
           <section>
@@ -118,41 +118,47 @@ function Home() {
           </section>
         ) : (
           <section className="dark:bg-gray-900 bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern-dark.svg')]">
-      <div className="py-8 px-4 mx-auto max-w-screen-xl text-center">
-        <a
-          href="#"
-          className="inline-flex items-center py-1 px-4 mb-7 text-sm text-blue-300 bg-gray-800 rounded-full hover:bg-gray-700"
-        >
-          <span className="text-xs bg-blue-500 rounded-full text-white px-4 py-1.5 mr-3">
-            New
-          </span>
-          <span>Image Auction Feature is Live! See what's new</span>
-        </a>
-        <h1 className="mb-4 text-4xl font-extrabold text-gray-200">
-          Upload, Bid & Earn from Your Images
-        </h1>
-        <p className="mb-8 text-lg text-gray-400">
-          Upload your best images, set a starting bid, and let the auction begin!
-          Users can bid on images for 10 days, and the highest bid wins.
-        </p>
-        <form className="w-full max-w-md mx-auto">
-          <div className="relative">
-            <input
-              type="email"
-              className="block w-full p-4 pl-10 text-sm text-gray-300 border border-gray-600 rounded-lg bg-gray-800"
-              placeholder="Enter your email to get started..."
-              required
-            />
-            <Link
-              to="/register"
-              className="text-white absolute right-2.5 bottom-2.5 bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2"
-            >
-              Sign up
-            </Link>
-          </div>
-        </form>
-      </div>
-    </section>
+            <div className="py-8 px-4 mx-auto max-w-screen-xl text-center">
+              <a
+                href="#"
+                className="inline-flex items-center py-1 px-4 mb-7 text-sm text-blue-300 bg-gray-800 rounded-full hover:bg-gray-700"
+              >
+                <span className="text-xs bg-blue-500 rounded-full text-white px-4 py-1.5 mr-3">
+                  New
+                </span>
+                <span>Image Auction Feature is Live! See what's new</span>
+              </a>
+              <h1 className="mb-4 text-4xl font-extrabold text-gray-200">
+                Upload, Bid & Earn from Your Images
+              </h1>
+              <p className="mb-8 text-lg text-gray-400">
+                Upload your best images, set a starting bid, and let the auction
+                begin! Users can bid on images for 10 days, and the highest bid
+                wins.
+              </p>
+              <form className="w-full max-w-md mx-auto">
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="block w-full p-4 pl-10 text-sm text-gray-300 border border-gray-600 rounded-lg bg-gray-800"
+                    placeholder="Enter your email to get started..."
+                    required
+                  />
+                  <Link
+                    to={{
+                      pathname: "/register",
+                      state: { email }, // Passing the email to the register page
+                    }}
+                    className="text-white absolute right-2.5 bottom-2.5 bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2"
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              </form>
+            </div>
+          </section>
         )}
 
         {/* Top Posts Section */}

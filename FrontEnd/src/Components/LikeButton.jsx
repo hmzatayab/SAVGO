@@ -17,7 +17,7 @@ const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
   // Function to handle like/unlike
   const handleLike = async () => {
     if (!isAuthenticated) {
-      showNotification("Please log in first.");
+      showNotification("You need to be logged in to perform this action.");
       navigate("/login");
       return;
     }
@@ -66,7 +66,7 @@ const LikeButton = ({ postId, initialLikes, isInitiallyLiked }) => {
       ) : (
         <i
           className="ri-heart-line ri-lg sm:ri-xl cursor-pointer text-red-400"
-          onClick={() => showNotification("Please log in first.")}
+          onClick={() => showNotification("You need to be logged in to perform this action.")}
         ></i>
       )}
       <span className="text-sm sm:text-base font-semibold text-white">

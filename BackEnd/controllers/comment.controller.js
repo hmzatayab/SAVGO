@@ -1,93 +1,61 @@
 import Comment from "../models/comment.model.js";
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId } from "mongoose";
 import Post from "../models/post.model.js";
 import mongoose from "mongoose";
 
 // ✅ Add a new comment on a post
 export const addComment = async (req, res) => {
-    try {
-      const { postId } = req.params; // Post ID from URL params
-      const { text } = req.body; // Comment text from request body
-      const userId = req.user.id; // User ID from JWT
-  
-      // Check if post exists
-      const post = await Post.findById(postId);
-      if (!post) {
-        return res.status(404).json({ message: "Post not found" });
-      }
-  
-      // Create new comment
-      const newComment = new Comment({
-        post: postId,
-        user: userId,
-        text,
-      });
-  
-      await newComment.save(); // Save comment to DB
-  
-      // Populate the `user` field
-      const populatedComment = await Comment.findById(newComment._id).populate(
-        "user",
-        "name image"
-      );
-  
-      // Add comment ID to the post's comments array
-      post.comments.push(newComment._id);
-      await post.save(); // Save updated post
-  
-      res.status(201).json({
-        message: "Comment added successfully",
-        newComment: populatedComment,
-      });
-    } catch (error) {
-      console.error("Error in addComment:", error);
-      res.status(500).json({ message: error.message });
+  try {
+    const { postId } = req.params; // Post ID from URL params
+    const { text } = req.body; // Comment text from request body
+    const userId = req.user.id; // User ID from JWT
+
+    // Check if post exists
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
     }
-  };
+
+    // Create new comment
+    const newComment = new Comment({
+      post: postId,
+      user: userId,
+      text,
+    });
+
+    await newComment.save(); // Save comment to DB
+
+    // Populate the `user` field
+    const populatedComment = await Comment.findById(newComment._id).populate( "user", "name, image");
+
+    // Add comment ID to the post's comments array
+    post.comments.push(newComment._id);
+    await post.save(); // Save updated post
+
+    res.status(201).json({
+      message: "Comment added successfully",
+      newComment: populatedComment,
+    });
+  } catch (error) {
+    console.error("Error in addComment:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // ✅ Get all comments for a post
 export const getComments = async (req, res) => {
-    try {
-      const { postId } = req.params;
-  
-      // Fetch comments and populate user data for both comments and replies
-      const comments = await Comment.find({ post: postId })
-        .populate("user", "name image") // Populate user for parent comments
-        .populate({
-          path: "replies.user", // Populate user for replies
-          select: "name image",
-        });
-  
-      res.status(200).json(comments);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
-
-// ✅ Like a comment
-export const likeComment = async (req, res) => {
   try {
-    const { commentId } = req.params;
-    const userId = req.user._id;
+    const { postId } = req.params;
 
-    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-    if (!isValidObjectId(commentId)) return res.status(400).json({ message: "Invalid comment ID" });
+    // Fetch comments and populate user data for both comments and replies
+    const comments = await Comment.find({ post: postId })
+      .populate("user", "name image username") // Populate user for parent comments
+      .populate({
+        path: "replies.user", // Populate user for replies
+        select: "name image username",
+      });
 
-    const comment = await Comment.findById(commentId);
-    if (!comment) return res.status(404).json({ message: "Comment not found" });
-
-    if (!comment.likes) comment.likes = [];
-
-    const alreadyLiked = comment.likes.includes(userId);
-
-    if (alreadyLiked) {
-      comment.likes.pull(userId); // Unlike
-    } else {
-      comment.likes.push(userId); // Like
-    }
-
-    await comment.save();
-    res.status(200).json({ message: "Success", likes: comment.likes.length });
+    res.status(200).json(comments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -133,6 +101,36 @@ export const addReply = async (req, res) => {
   }
 };
 
+// ✅ Like a comment
+export const likeComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const userId = req.user._id;
+
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!isValidObjectId(commentId))
+      return res.status(400).json({ message: "Invalid comment ID" });
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    if (!comment.likes) comment.likes = [];
+
+    const alreadyLiked = comment.likes.includes(userId);
+
+    if (alreadyLiked) {
+      comment.likes.pull(userId); // Unlike
+    } else {
+      comment.likes.push(userId); // Like
+    }
+
+    await comment.save();
+    res.status(200).json({ message: "Success", likes: comment.likes.length });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // ✅ Like a reply on a comment
 export const likeReply = async (req, res) => {
   try {
@@ -159,8 +157,3 @@ export const likeReply = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
-
-
