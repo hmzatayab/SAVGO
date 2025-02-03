@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Avatar, Dropdown } from "flowbite-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
 
 export const Header = () => {
@@ -9,6 +8,15 @@ export const Header = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
+  const formatFollowers = (count) => {
+    if (count >= 10000) {
+      return (count / 1000).toFixed(0) + "k";
+    } else if (count >= 1000) {
+      return count.toLocaleString();
+    }
+    return count;
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full bg-gray-800 z-50">
@@ -19,7 +27,7 @@ export const Header = () => {
             to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <img src="../../public/logo.png" alt="Logo" className="w-36" />
+            <img src="../../public/logo.png" alt="Logo" className="w-28 lg:w-36" />
           </Link>
 
           {/* Desktop Menu */}
@@ -36,107 +44,64 @@ export const Header = () => {
           </div>
 
           {token ? (
-            // <div className="flex justify-end space-x-4 lg:w-[176px]">
-            //   <Dropdown
-            //     label={<Avatar alt="User settings" img={user.image} rounded />}
-            //     arrowIcon={false}
-            //     inline
-            //   >
-            //     <Dropdown.Header className="w-40">
-            //       <span className="block text-base font-bold">
-            //         {user.name.length > 5
-            //           ? user.name.slice(0, 5) + "..."
-            //           : user.name}
-            //       </span>
-            //       <span className="block truncate text-sm font-normal italic">
-            //         @
-            //         {user.username.length > 15
-            //           ? user.username.slice(0, 15) + "..."
-            //           : user.username}
-            //       </span>
-            //     </Dropdown.Header>
-            //     <Dropdown.Item>
-            //       <Link to={"/dashboard"}>Profile</Link>
-            //     </Dropdown.Item>
-            //     <Dropdown.Item>Settings</Dropdown.Item>
-            //     <Dropdown.Item>Earnings</Dropdown.Item>
-            //     <Dropdown.Divider />
-            //     <Dropdown.Item>
-            //       <Link to={"/logout"}>Sign out</Link>
-            //     </Dropdown.Item>
-            //   </Dropdown>
-            //   {/* Mobile Menu Button */}
-            //   <div className="flex justify-center items-center">
-            //     <button
-            //       className="lg:hidden text-white bg-gray-700 p-2 rounded-lg"
-            //       onClick={toggleDrawer}
-            //     >
-            //       <i className="ri-menu-line text-2xl"></i>
-            //     </button>
-            //     <Link to={"/logout"} className="hidden sm:flex lg:block">
-            //       <i className="ri-logout-circle-r-line text-xl text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"></i>
-            //     </Link>
-            //   </div>
-            // </div>
-            <div className="flex">
-              <Link to={"/dashboard"}>
-                <div className="flex flex-row items-center bg-gray-800 p-2 rounded-lg w-[120px] md:w-[140px] lg:w-[160px]">
-                  {/* Profile Image with Gradient Border */}
-                  <div className="relative w-10 h-10">
-                    <div className="w-full h-full rounded-lg p-[2px] bg-gradient-to-r from-yellow-500 to-orange-500">
+            <div className="flex items-center space-x-4">
+              <Link to="/dashboard">
+                <div className="flex items-center h-[60px] bg-gray-800 p-3 rounded-xl shadow-lg hover:shadow-xl transition duration-300 ease-in-out w-[140px] md:w-[160px] lg:w-[160px]">
+                  {/* Profile Image with Circular Gradient Border */}
+                  <div className="relative w-12 h-12">
+                    <div className="w-full h-full rounded-full p-[2px] bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
                       <img
                         src={user.image}
                         alt="User Avatar"
-                        className="w-full h-full object-cover rounded-lg pl-[1px]"
+                        className="w-full h-full object-cover rounded-full border-2 border-gray-800"
                       />
                     </div>
                   </div>
 
-                  {/* Follower Count, Icon, and Username */}
-                  <div className="flex flex-col ml-2">
-                    {/* Username */}
-                    <span className="text-gray-300 text-xs mt-[2px] font-medium mb-1">
+                  {/* User Info */}
+                  <div className="flex flex-col ml-3 space-y-1">
+                    <span className="text-gray-200 text-sm font-semibold truncate">
                       {user.name
-                        .split(" ") // Split name into words
+                        .split(" ")
                         .map((word, index) =>
                           index === 0 ? word : index === 1 ? `${word[0]}.` : ""
-                        ) // First word as is, second word as first letter + dot
-                        .join(" ") // Join words with space
+                        )
+                        .join(" ")
                         .trim()}
                     </span>
 
-                    {/* Follower Count and Icon */}
-                    <div className="flex items-center">
-                      <i className="ri-user-fill text-gray-400 text-sm"></i>
-                      <span className="text-white text-sm font-semibold">
-                        {user.followers.length || 0}
+                    <div className="flex items-center text-gray-400 text-xs space-x-1">
+                      <i className="ri-user-fill"></i>
+                      <span className="font-medium text-white">
+                        {formatFollowers(user.followers.length || 0)}
                       </span>
                     </div>
                   </div>
                 </div>
               </Link>
 
-              <div className="flex justify-center items-center ml-2">
+              {/* Menu Button */}
+              <div className="flex justify-center items-center ml-3 lg:hidden">
                 <button
-                  className="lg:hidden text-white bg-gray-700 p-2 rounded-lg"
+                  className="text-white bg-gray-700 p-3 rounded-xl hover:bg-gray-600 transition"
                   onClick={toggleDrawer}
                 >
-                  <i className="ri-menu-line text-2xl"></i>
+                  <i className="ri-menu-line text-xl"></i>
                 </button>
               </div>
             </div>
           ) : (
-            <div>
+            <div className="flex space-x-4">
               <h4 className="text-white">
                 <Link
                   to={"/login"}
-                  className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                  className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                 >
                   Login
                 </Link>
                 <Link
                   to={"/register"}
-                  className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                  className="text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                 >
                   Sign Up
                 </Link>
@@ -150,12 +115,10 @@ export const Header = () => {
       <div
         className={`fixed top-0 left-0 h-screen w-64 bg-gray-900 dark:bg-gray-800 p-6 transform ${
           drawerOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 z-40`}
+        } transition-transform duration-300 z-40 lg:hidden`}
       >
         <div className="flex justify-between items-center mb-6">
-          <h5 className="text-gray-500 dark:text-gray-200 font-semibold">
-            Menu
-          </h5>
+          <h5 className="text-gray-500 dark:text-gray-200 font-semibold">Menu</h5>
           <button
             onClick={toggleDrawer}
             className="text-gray-500 dark:text-gray-400"

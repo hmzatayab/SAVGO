@@ -8,6 +8,8 @@ const Followers = () => {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  console.log(followers);
+  
 
   useEffect(() => {
     // Fetch followers data from the API
@@ -58,6 +60,7 @@ const Followers = () => {
               avatar: user.image,
               posts: user.posts.length,
               followers: user.followers.length,
+              bio: user.bio,
               likes: 0, // Add likes if available in the API response
             }}
           />

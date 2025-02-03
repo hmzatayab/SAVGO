@@ -49,102 +49,103 @@ const ProfilePage = () => {
     <>
       <div className="p-8 space-y-8 mt-28">
         {/* Profile Section */}
-        <div className="bg-gray-700 shadow rounded-lg p-6 flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
+        <div className="bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl rounded-2xl p-8 flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0">
           {/* User Info */}
-          <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-6">
-            <div className="relative w-24 h-24">
-              {/* Gradient Border */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full p-1">
+          <div className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8">
+            {/* Profile Picture with Gradient Border */}
+            <div className="relative w-32 h-32">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full p-1.5">
                 <img
                   src={user.image}
                   alt="User Profile"
-                  className="w-full h-full rounded-full object-cover bg-gray-700 shadow-lg"
+                  className="w-full h-full rounded-full object-cover bg-gray-700 shadow-xl"
                 />
               </div>
-
-              {/* Hover Effect */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-full opacity-0 hover:opacity-100 transition-all duration-300">
-                <i className="ri-camera-line text-white text-2xl"></i>
+              {/* Hover Effect for Profile Picture */}
+              <Link to={'/update'}>
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-full opacity-0 hover:opacity-100 transition-all duration-300 cursor-pointer">
+                <i className="ri-camera-line text-white text-3xl"></i>
               </div>
+              </Link>
             </div>
+
+            {/* User Details */}
             <div className="text-center lg:text-left">
-              <div className="flex items-center">
-                <h1 className="text-3xl font-bold text-white">{user.name}</h1>
+              <div className="flex items-center justify-center lg:justify-start">
+                <h1 className="text-4xl font-bold text-white">{user.name}</h1>
                 <Link
                   to={"/update"}
                   state={{ from: "dashboard" }}
                   title="Edit Profile"
-                  className="inline-block ml-3"
+                  className="ml-3 hover:scale-110 transition-transform duration-300"
                 >
-                  <i className="ri-edit-2-fill text-white"></i>
+                  <i className="ri-edit-2-fill text-white text-2xl"></i>
                 </Link>
               </div>
-              <div className="flex items-center">
-                <i className="ri-mail-line text-white mr-2"></i>
-                <p className="text-sm text-gray-400 italic">{user.email}</p>
+              <p className="text-sm text-gray-400 italic mt-2">{user.email}</p>
+
+              {/* Bio Section */}
+              <div className="mt-4 max-w-md">
+                <p className="text-gray-300 text-sm">
+                  {user.bio || "Add a bio to tell people more about yourself."}
+                </p>
               </div>
-              {/* <p className="text-sm text-gray-400">
-                {(() => {
-                  const [username, domain] = user.email.split("@");
-                  const hiddenUsername =
-                    username[0] +
-                    "*".repeat(username.length - 2) +
-                    username[username.length - 1];
-                  const hiddenDomain =
-                    domain[0] +
-                    "*".repeat(domain.indexOf(".")) +
-                    domain.slice(domain.indexOf("."));
-                  return `${hiddenUsername}@${hiddenDomain}`;
-                })()}
-              </p> */}
             </div>
           </div>
 
-          {/* Settings Icon */}
-          <div className="flex flex-col sm:flex-row items-center gap-3">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             {/* Upload Image Button */}
-            <div className="flex justify-center lg:justify-end">
-              <Link
-                onClick={openDrawer}
-                state={{ from: "dashboard" }}
-                className="mx-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold 
-                 px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm sm:text-base"
-              >
-                Upload Image
-              </Link>
-              <UploadDrawer open={isDrawerOpen} onClose={closeDrawer} />
-            </div>
+            <button
+              onClick={openDrawer}
+              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
+            >
+              <i className="ri-upload-cloud-2-line"></i>
+              Upload Image
+            </button>
+            <UploadDrawer open={isDrawerOpen} onClose={closeDrawer} />
 
             {/* Logout Button */}
-            <div className="flex justify-center lg:justify-end">
-              <Link
-                to={"/logout"}
-                className="mx-2 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold 
-                 px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm sm:text-base"
-              >
-                Logout
-              </Link>
-            </div>
+            <Link
+              to={"/logout"}
+              className="bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
+            >
+              <i className="ri-logout-box-r-line"></i>
+              Logout
+            </Link>
           </div>
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          {/* Followers */}
           <Link to={`/followers/${user._id}`}>
-            <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-              <h2 className="text-xl font-bold text-white">
+            <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+              <h2 className="text-3xl font-bold text-white">
                 {followers.length}
               </h2>
-              <p className="text-gray-400">Followers</p>
+              <p className="text-gray-400 mt-2">Followers</p>
             </div>
           </Link>
-          <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-            <h2 className="text-xl font-bold text-white">{following.length}</h2>
-            <p className="text-gray-400">Following</p>
+
+          {/* Following */}
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">
+              {following.length}
+            </h2>
+            <p className="text-gray-400 mt-2">Following</p>
           </div>
-          <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-            <h2 className="text-xl font-bold text-white">89</h2>
-            <p className="text-gray-400">Total Likes</p>
+
+          {/* Profile Views */}
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">1.2K</h2>
+            <p className="text-gray-400 mt-2">Profile Views</p>
+          </div>
+
+          {/* Total Sales */}
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">$5.6K</h2>
+            <p className="text-gray-400 mt-2">Total Sales</p>
           </div>
         </div>
 

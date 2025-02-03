@@ -80,7 +80,7 @@ export const getUserFollowers = async (req, res) => {
 
     const user = await userModel
       .findById(userId)
-      .populate("followers", "name email username posts followers image"); // Populate followers
+      .populate("followers", "name email username posts followers image bio"); // Populate followers
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });

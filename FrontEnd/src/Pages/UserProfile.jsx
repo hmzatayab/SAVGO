@@ -95,63 +95,91 @@ const ProfilePage = () => {
   return (
     <div className="p-8 space-y-8 mt-28">
       {/* Profile Section */}
-      <div className="bg-gray-700 shadow rounded-lg p-6 flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
+      <div className="bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl rounded-2xl p-8 flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0">
         {/* User Info */}
-        <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-6">
-          <div className="relative w-24 h-24">
-            {/* Gradient Border */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full p-1">
+        <div className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8">
+          {/* Profile Picture with Gradient Border */}
+          <div className="relative w-32 h-32">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full p-1.5">
               <img
                 src={userData.image}
                 alt="User Profile"
-                className="w-full h-full rounded-full object-cover bg-gray-700 shadow-lg"
+                className="w-full h-full rounded-full object-cover bg-gray-700 shadow-xl"
               />
             </div>
           </div>
+
+          {/* User Details */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center">
-              <h1 className="text-3xl font-bold text-white">{userData.name}</h1>
+            <div className="flex items-center justify-center lg:justify-start">
+              <h1 className="text-4xl font-bold text-white">{userData.name}</h1>
             </div>
-            <div className="flex items-center">
-              <p className="text-sm text-gray-400 italic">
-                @{userData.username}
+            <p className="text-sm text-gray-400 italic mt-2">
+              @{userData.username}
+            </p>
+
+            {/* Bio Section */}
+            <div className="mt-4 max-w-md">
+              <p className="text-gray-300 text-sm">
+                {userData.bio || "This user hasn't added a bio yet."}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Settings Icon */}
-        <div className="flex justify-center lg:justify-end">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          {/* Follow/Unfollow Button */}
           <button
             onClick={handleFollow}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
           >
-            {isFollowing ? "Unfollow" : "Follow"}
+            {isFollowing ? (
+              <>
+                <i className="ri-user-unfollow-line"></i>
+                Unfollow
+              </>
+            ) : (
+              <>
+                <i className="ri-user-add-line"></i>
+                Follow
+              </>
+            )}
           </button>
+
+          {/* Message Button */}
           <Link
             to={"/chat"}
-            className="ml-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
+            className="bg-gradient-to-r from-green-500 to-teal-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2"
           >
+            <i className="ri-chat-3-line"></i>
             Message
           </Link>
         </div>
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {/* Followers */}
         <Link to={`/followers/${userData._id}`}>
-          <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-            <h2 className="text-xl font-bold text-white">{followers.length}</h2>
-            <p className="text-gray-400">Followers</p>
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">
+              {followers.length}
+            </h2>
+            <p className="text-gray-400 mt-2">Followers</p>
           </div>
         </Link>
-        <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-          <h2 className="text-xl font-bold text-white">{following.length}</h2>
-          <p className="text-gray-400">Following</p>
+
+        {/* Following */}
+        <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+          <h2 className="text-3xl font-bold text-white">{following.length}</h2>
+          <p className="text-gray-400 mt-2">Following</p>
         </div>
-        <div className="bg-gray-700 text-center rounded-lg p-4 shadow space-y-2 hover:shadow-lg hover:bg-gray-900 transition">
-          <h2 className="text-xl font-bold text-white">89</h2>
-          <p className="text-gray-400">Total Likes</p>
+
+        {/* Total Sales */}
+        <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+          <h2 className="text-3xl font-bold text-white">$5.6K</h2>
+          <p className="text-gray-400 mt-2">Total Sales</p>
         </div>
       </div>
 

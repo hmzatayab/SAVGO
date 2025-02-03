@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import userModel from "../models/user.model.js";
-import postModel from "../models/post.model.js";
+
 
 export const userRegister = async (req, res) => {
   const { username, name, email, password } = req.body;
@@ -87,12 +87,19 @@ export const userLogin = async (req, res) => {
 };
 
 export const userUpdate = async (req, res) => {
-  const { name, email, image } = req.body;
-
   try {
+    const { name, bio } = req.body;
+    let imageUrl = req.body.image; // Fallback if image isn't uploaded
+
+    if (req.file) {
+      // If image is uploaded, generate the permanent URL
+      imageUrl = `${req.protocol}://${req.get("host")}/Images/Uploads/${req.file.filename}`; // Save relative path
+    }
+
+    // Update the user's profile with the image URL
     const updatedUser = await userModel.findByIdAndUpdate(
-      req.user.id, // Use `req.user.id` from authentication middleware
-      { name, email, image },
+      req.user.id,
+      { name, bio, image: imageUrl },
       { new: true }
     );
 
@@ -102,11 +109,13 @@ export const userUpdate = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    res
-      .status(200)
-      .json({ success: true, message: "Successfully Updated", updatedUser });
+    // Return updated user profile with image URL
+    res.status(200).json({
+      success: true,
+      message: "Successfully Updated",
+      updatedUser,
+    });
   } catch (error) {
-    console.error("Error updating user:", error.message);
     res
       .status(500)
       .json({ success: false, message: "Server error", error: error.message });
@@ -168,12 +177,10 @@ export const getAllpost = async (req, res) => {
     res.status(200).json({ success: true, posts: allPosts });
   } catch (error) {
     console.error("Error fetching posts:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "An error occurred while fetching posts",
-      });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching posts",
+    });
   }
 };
 

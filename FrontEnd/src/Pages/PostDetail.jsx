@@ -377,33 +377,6 @@ function PostDetail() {
                         {comment.text}
                       </p>
                       <div className="flex items-center space-x-4 mt-2">
-                        {/* <button
-  onClick={() => {
-    if (!token) {
-      showNotification("Please login to like comments.");
-      return;
-    }
-    likeComment(comment._id);
-  }}
-  className={`text-sm ${
-    !token
-      ? "text-red-400" // Always red for logged-out users
-      : comment.isLikedByCurrentUser
-      ? "text-gray-400" // Gray for "Unlike" when logged in
-      : "text-red-400" // Red for "Like" when logged in
-  } hover:text-gray-200 transition-colors`}
-  disabled={!token} // Disable button if user is logged out
->
-  {!token
-    ? "Like" // Always "Like" for logged-out users
-    : comment.isLikedByCurrentUser
-    ? "Unlike"
-    : "Like"}{" "}
-  <span className="pl-1 text-white font-semibold">
-    {comment.likes.length}
-  </span>
-</button> */}
-
                         <button
                           onClick={() => setReplyingTo(comment)}
                           className="text-sm text-gray-400 hover:text-gray-200 transition-colors"
@@ -451,20 +424,7 @@ function PostDetail() {
                                 <p className="text-sm text-gray-300 leading-relaxed">
                                   {reply.text}
                                 </p>
-                                <div className="flex items-center space-x-4 mt-2">
-                                  {/* <button
-                                    onClick={() =>
-                                      likeReply(comment._id, reply._id)
-                                    }
-                                    disabled={!token}
-                                    className="text-sm text-red-400 hover:text-gray-200 transition-colors"
-                                  >
-                                    Like
-                                    <span className="pl-1 text-white font-semibold">
-                                      {reply.likes?.length || 0}
-                                    </span>
-                                  </button> */}
-                                </div>
+                                <div className="flex items-center space-x-4 mt-2"></div>
                               </div>
                             </div>
                           ))}
@@ -520,16 +480,6 @@ function PostDetail() {
             ) : allPosts.length === 0 ? (
               <p className="text-gray-400">No posts available.</p>
             ) : (
-              // <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              //   {allPosts
-              //     .filter((post) => post._id !== id)
-              //     .sort(() => Math.random() - 0.5)
-              //     .slice(0, 12)
-              //     .map((post) => (
-              //       <PostCard posts={post} key={post._id} />
-              //     ))}
-              // </div>
-
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {postsToDisplay.map((p) => (
                   <PostCard posts={p} key={p._id} />

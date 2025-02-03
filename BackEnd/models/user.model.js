@@ -40,6 +40,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    bio: {
+      type: String,
+      maxlength: [160, "Bio cannot exceed 160 characters"],
+      default: "",
+    },
+    totalImagesSold: {
+      type: Number,
+      default: 0,
+    },
+    totalEarnings: {
+      type: Number,
+      default: 0,
+    },
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

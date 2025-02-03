@@ -13,7 +13,6 @@ function Home() {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
 
-
   // Function to open the upload drawer
   const openDrawer = () => {
     setIsDrawerOpen(true);
