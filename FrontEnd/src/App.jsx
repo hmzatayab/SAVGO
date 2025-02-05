@@ -18,6 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Wishlist from "./Pages/Wishlist.jsx";
 import PostDetail from "./Pages/PostDetail.jsx";
 import Followers from "./Pages/Followers.jsx";
+import Game from "./Pages/Game.jsx";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/dashboard" element={<UserProtectWrapper><ProfilePage/></UserProtectWrapper>}/>
         <Route path="/profile/:id" element={<UserProfilePage/>}/>
+        <Route path="/game" element={<UserProtectWrapper><Game/></UserProtectWrapper>}/>
         <Route path="/post/:id" element={<PostDetail></PostDetail>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
