@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from 'path';
 import userRouter from './routers/user.routes.js';
+import auctionRouter from './routers/auction.routes.js';
+import walletRouter from './routers/wallet.routes.js'
 import profileRouter from './routers/profile.routes.js';
 import commentRouter from './routers/comment.routes.js';
 import { fileURLToPath } from 'url';
@@ -16,10 +18,8 @@ dotenv.config();
 connectDB();
 const app = express();
 
-// HTTP server banaya Socket.io ke liye
+// HTTP server for Socket.io
 const server = http.createServer(app);
-
-// Socket.io setup
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "http://192.168.100.13:5173"],
@@ -28,26 +28,45 @@ const io = new Server(server, {
   },
 });
 
+// Game State Object
+const games = {};
+
 // Socket.io Events
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
-  // Game join karne ka event
   socket.on('joinGame', (data) => {
-    console.log('Player joined:', data);
-    socket.join(data.gameId); // Room join karna
-    io.to(data.gameId).emit('playerJoined', { playerId: socket.id });
+    if (!data.gameId) return;
+
+    if (!games[data.gameId]) {
+        games[data.gameId] = { players: [] };
+    }
+
+    if (games[data.gameId].players.length < 2) {
+        games[data.gameId].players.push(socket.id);
+        socket.join(data.gameId);
+        io.to(data.gameId).emit('playerJoined', { playerId: socket.id });
+
+        if (games[data.gameId].players.length === 2) {
+            io.to(data.gameId).emit('gameStart', { gameId: data.gameId });
+        }
+    }
   });
 
-  // Move karne ka event
   socket.on('makeMove', (moveData) => {
     console.log('Move received:', moveData);
-    io.to(moveData.gameId).emit('moveMade', moveData); // Broadcast to room
+    io.to(moveData.gameId).emit('moveMade', moveData);
   });
 
-  // Disconnect event
   socket.on('disconnect', () => {
     console.log(`Client disconnected: ${socket.id}`);
+
+    for (let gameId in games) {
+        games[gameId].players = games[gameId].players.filter(id => id !== socket.id);
+        if (games[gameId].players.length === 0) {
+            delete games[gameId];
+        }
+    }
   });
 });
 
@@ -58,6 +77,12 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
+
+// Allow CORS Headers for Cookies
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 // Define __dirname in ES Module
 const __filename = fileURLToPath(import.meta.url);
@@ -72,11 +97,13 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+// Routes
 app.use("/user", userRouter);
 app.use("/profile", profileRouter);
 app.use("/c", commentRouter);
 app.use("/game", gameRouter);
-
+app.use("/auction", auctionRouter)
+app.use("/wallet", walletRouter)
 
 // Server Start
 const PORT = process.env.PORT || 5000;

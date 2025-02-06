@@ -1,12 +1,15 @@
 import Game from "../models/game.model.js";
 import userModel from "../models/user.model.js";
 
+// Helper function to delay execution
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const createGame = async (req, res) => {
   try {
     const { creatorId } = req.body;
 
     const users = await userModel.find().populate("posts").select("-password");
-    const allPosts = [];
+    let allPosts = [];
 
     users.forEach((user) => {
       user.posts.forEach((post) => {
@@ -28,9 +31,11 @@ export const createGame = async (req, res) => {
       return res.status(400).json({ message: "Not enough posts to create a game" });
     }
 
-    const selectedPosts = allPosts.slice(0, 10);
-    const images = selectedPosts.map((post) => post.imageURL);
+    // Random 10 posts select karna
+    const shuffledPosts = allPosts.sort(() => Math.random() - 0.5).slice(0, 10);
+    const images = shuffledPosts.map((post) => post.imageURL);
 
+    // Cards shuffle
     const shuffledCards = [...images, ...images]
       .map((image, index) => ({
         id: index,
@@ -45,7 +50,7 @@ export const createGame = async (req, res) => {
     const newGame = new Game({
       players: [creatorId],
       cards: shuffledCards,
-      currentTurn: creatorId,
+      currentTurn: null,
       scores: { [creatorId]: 0 },
       userData: {
         [creatorId]: {
@@ -82,7 +87,15 @@ export const joinGame = async (req, res) => {
       image: user.image,
     };
 
+    if (game.players.length === 2) {
+      game.currentTurn = game.players[0]; // Game start when 2 players join
+    }
+
     await game.save();
+
+    // Socket.io Event Emit
+    req.io.to(gameId).emit("playerJoined", { game });
+
     res.status(200).json(game);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -93,6 +106,10 @@ export const makeMove = async (req, res) => {
   try {
     const { gameId, playerId, card1Id, card2Id } = req.body;
     const game = await Game.findById(gameId);
+
+    if (!game || game.players.length < 2) {
+      return res.status(403).json({ message: "Game hasn't started yet" });
+    }
 
     if (game.currentTurn !== playerId) {
       return res.status(403).json({ message: "Not your turn!" });
@@ -105,6 +122,9 @@ export const makeMove = async (req, res) => {
       return res.status(400).json({ message: "Invalid move" });
     }
 
+    card1.flipped = true;
+    card2.flipped = true;
+
     let isMatch = false;
 
     if (card1.image === card2.image) {
@@ -113,6 +133,8 @@ export const makeMove = async (req, res) => {
       isMatch = true;
       game.scores[playerId] = (game.scores[playerId] || 0) + 1;
     } else {
+      // Delay flipping back the cards if they don't match
+      await delay(2000);
       card1.flipped = false;
       card2.flipped = false;
       game.currentTurn = game.players.find((p) => p !== playerId);
@@ -125,6 +147,10 @@ export const makeMove = async (req, res) => {
     }
 
     await game.save();
+
+    // Socket.io Event Emit
+    req.io.to(gameId).emit("moveMade", { game, isMatch, isGameOver });
+
     res.status(200).json({ game, isMatch, isGameOver });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -133,7 +159,7 @@ export const makeMove = async (req, res) => {
 
 export const getGameState = async (req, res) => {
   try {
-    const game = await Game.findById(req.params.id).populate("userData");
+    const game = await Game.findById(req.params.id);
     if (!game) return res.status(404).json({ message: "Game not found" });
 
     res.status(200).json(game);

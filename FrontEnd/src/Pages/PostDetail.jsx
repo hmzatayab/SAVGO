@@ -466,6 +466,10 @@ function PostDetail() {
           </div>
         </div>
 
+        <div  className="bg-gray-900 h-16 mt-4 lg:mx-64 px-5 rounded-xl ">
+          hamza
+        </div>
+
         <div className="p-5">
           <div className="mt-6">
             <div className="relative mb-8 flex flex-col items-center text-center">

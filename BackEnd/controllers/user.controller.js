@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import userModel from "../models/user.model.js";
+import { Wallet } from "../models/wallet.model.js";
 
 
 export const userRegister = async (req, res) => {
@@ -24,14 +25,24 @@ export const userRegister = async (req, res) => {
       name,
       email,
       password: hashPassword,
-      image:
-        "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
+      image: "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
     });
+
+    const wallet = await Wallet.create({
+      user: user._id,
+      balance: 0, // Initial balance
+      isActive: true, // Wallet is active by default
+    });
+
+    user.wallet = wallet._id; // Assign the wallet ID to the user
 
     await user.save();
 
+    // Populate the wallet details after user creation
+    const populatedUser = await userModel.findById(user._id).populate("wallet");
+
     res.status(201).json({
-      ...user._doc,
+      ...populatedUser._doc,
       password: null,
     });
   } catch (error) {
@@ -192,7 +203,7 @@ export const getUserAllPost = async (req, res) => {
   }
   const post = await userModel
     .findById(req.user.id)
-    .populate("posts")
+    .populate("posts", )
     .select("-password");
   post.posts.forEach((post) => {
     post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${

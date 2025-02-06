@@ -4,6 +4,7 @@ import { UserDataContext } from "../context/UserContext";
 import Skeleton from "../Components/Skeleton";
 import LikeButton from "../Components/LikeButton";
 import UploadDrawer from "../Components/UploadDrawer";
+import axios from "axios";
 
 const ProfilePage = () => {
   const token = localStorage.getItem("token");
@@ -13,6 +14,30 @@ const ProfilePage = () => {
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    // Function to fetch the wallet balance
+    const fetchBalance = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/wallet/balance`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // assuming the token is stored in localStorage
+            },
+          }
+        );
+        setBalance(response.data.balance); // Assuming the API returns a `balance` field
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+      }
+    };
+
+    fetchBalance();
+  }, []);
 
   // Function to open the upload drawer
   const openDrawer = () => {
@@ -62,10 +87,10 @@ const ProfilePage = () => {
                 />
               </div>
               {/* Hover Effect for Profile Picture */}
-              <Link to={'/update'}>
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-full opacity-0 hover:opacity-100 transition-all duration-300 cursor-pointer">
-                <i className="ri-camera-line text-white text-3xl"></i>
-              </div>
+              <Link to={"/update"}>
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-full opacity-0 hover:opacity-100 transition-all duration-300 cursor-pointer">
+                  <i className="ri-camera-line text-white text-3xl"></i>
+                </div>
               </Link>
             </div>
 
@@ -146,6 +171,38 @@ const ProfilePage = () => {
           <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
             <h2 className="text-3xl font-bold text-white">$5.6K</h2>
             <p className="text-gray-400 mt-2">Total Sales</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          {/* Total Balance */}
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">
+              {balance !== null ? `$${balance}` : "No balance available"}
+            </h2>
+            <p className="text-gray-400 mt-2">Total Balance</p>
+          </div>
+
+          {/* Withdraw Button */}
+          <Link to={'/withdraw'}>
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">Withdraw</h2>
+            <p className="text-gray-400 mt-2">Maximum 100$</p>
+          </div>
+          </Link>
+
+          {/* Deposit Button */}
+          <Link to={"/deposit"}>
+            <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+              <h2 className="text-3xl font-bold text-white">Deposit</h2>
+              <p className="text-gray-400 mt-2">Minimum 1$</p>
+            </div>
+          </Link>
+
+          {/* Total Spend */}
+          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+            <h2 className="text-3xl font-bold text-white">$20k</h2>
+            <p className="text-gray-400 mt-2">Total Spend</p>
           </div>
         </div>
 

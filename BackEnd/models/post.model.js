@@ -61,6 +61,15 @@ const postSchema = mongoose.Schema({
     default: false,
   },
   imageURL: { type: String },
+  isAuctioned: {
+    type: Boolean,
+    default: false,
+  },
+  auctionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Auction",
+    default: null,
+  }
 });
 
 export default mongoose.model("post", postSchema);

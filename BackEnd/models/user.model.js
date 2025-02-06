@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Wallet } from "../models/wallet.model.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -77,6 +78,38 @@ const userSchema = new mongoose.Schema(
         ref: "post",
       },
     ],
+    auctionBids: [
+      {
+        auction: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Auction",
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    auctionsWon: [
+      {
+        auction: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Auction",
+        },
+        finalPrice: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    wallet: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Wallet",
+    },
   },
   { timestamps: true }
 );

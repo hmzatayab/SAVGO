@@ -19,6 +19,8 @@ import Wishlist from "./Pages/Wishlist.jsx";
 import PostDetail from "./Pages/PostDetail.jsx";
 import Followers from "./Pages/Followers.jsx";
 import Game from "./Pages/Game.jsx";
+import { DepositPage } from "./Pages/Wallet/Deposit.jsx";
+import { WithdrawPage } from "./Pages/Wallet/Withdraw.jsx";
 
 
 function App() {
@@ -39,6 +41,8 @@ function App() {
         <Route path="/dashboard" element={<UserProtectWrapper><ProfilePage/></UserProtectWrapper>}/>
         <Route path="/profile/:id" element={<UserProfilePage/>}/>
         <Route path="/game" element={<UserProtectWrapper><Game/></UserProtectWrapper>}/>
+        <Route path="/deposit" element={<UserProtectWrapper><DepositPage/></UserProtectWrapper>}/>
+        <Route path="/withdraw" element={<UserProtectWrapper><WithdrawPage/></UserProtectWrapper>}/>
         <Route path="/post/:id" element={<PostDetail></PostDetail>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>

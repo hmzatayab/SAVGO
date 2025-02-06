@@ -1,7 +1,7 @@
 import express from "express";
 import { createGame, joinGame, makeMove, getGameState } from '../controllers/game.controller.js';
 
-const router = express();
+const router = express.Router(); // ✅ `express()` ki jagah `express.Router()`
 
 router.post("/create", createGame); // Game create karne ka route
 router.post("/join", joinGame); // Game join karne ka route
