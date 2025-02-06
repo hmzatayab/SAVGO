@@ -165,7 +165,7 @@ const UploadDrawer = ({ open, onClose }) => {
       <div
         className={`fixed bottom-0 left-0 w-full bg-gray-900 p-6 transition-transform transform ${
           open ? "translate-y-0" : "translate-y-full"
-        } z-50 rounded-tl-xl rounded-tr-xl shadow-2xl`}
+        } z-50 rounded-t-3xl shadow-2xl border-t border-gray-700`}
       >
         <div className="flex justify-between items-center">
           <div className="relative mb-8">

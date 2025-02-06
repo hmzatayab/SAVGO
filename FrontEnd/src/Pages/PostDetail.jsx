@@ -22,8 +22,6 @@ function PostDetail() {
   const [userId, setUserId] = useState(null);
   const [postsToDisplay, setPostsToDisplay] = useState([]);
 
-  // console.log(comments[1].replies);
-
   const formatCommentTime = (createdAt) => {
     const now = new Date();
     const commentDate = new Date(createdAt);

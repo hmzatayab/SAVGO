@@ -95,7 +95,11 @@ const ProfilePage = () => {
   return (
     <div className="p-8 space-y-8 mt-28">
       {/* Profile Section */}
-      <div className="bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl rounded-2xl p-8 flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 shadow-2xl rounded-2xl p-8 flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0 border border-gray-700 relative overflow-hidden">
+        {/* Glowing Effect */}
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-r from-purple-500 to-pink-500 opacity-20 rounded-full blur-3xl"></div>
+
         {/* User Info */}
         <div className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8">
           {/* Profile Picture with Gradient Border */}
@@ -161,25 +165,37 @@ const ProfilePage = () => {
       {/* Stats Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {/* Followers */}
+
         <Link to={`/followers/${userData._id}`}>
-          <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-            <h2 className="text-3xl font-bold text-white">
-              {followers.length}
-            </h2>
-            <p className="text-gray-400 mt-2">Followers</p>
+          <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 blur-lg"></div>
+            <div className="relative z-10 text-center">
+              <h2 className="text-3xl font-bold text-white">
+                {followers.length}
+              </h2>
+              <p className="text-gray-400 mt-2">Followers</p>
+            </div>
           </div>
         </Link>
 
         {/* Following */}
-        <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-          <h2 className="text-3xl font-bold text-white">{following.length}</h2>
-          <p className="text-gray-400 mt-2">Following</p>
+        <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+          <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-green-500 to-blue-500 opacity-20 blur-lg"></div>
+          <div className="relative z-10 text-center">
+            <h2 className="text-3xl font-bold text-white">
+              {following.length}
+            </h2>
+            <p className="text-gray-400 mt-2">Following</p>
+          </div>
         </div>
 
         {/* Total Sales */}
-        <div className="bg-gradient-to-r from-gray-700 to-gray-900 text-center rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-          <h2 className="text-3xl font-bold text-white">$5.6K</h2>
-          <p className="text-gray-400 mt-2">Total Sales</p>
+        <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+          <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-pink-500 to-red-500 opacity-20 blur-lg"></div>
+          <div className="relative z-10 text-center">
+            <h2 className="text-3xl font-bold text-white">$5.6K</h2>
+            <p className="text-gray-400 mt-2">Total Sales</p>
+          </div>
         </div>
       </div>
 

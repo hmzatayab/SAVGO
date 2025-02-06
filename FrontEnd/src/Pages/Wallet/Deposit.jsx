@@ -67,7 +67,7 @@ export const DepositPage = () => {
 
           <h6 className="my-6 text-center">
             Want to withdraw funds?
-            <Link to="/withdraw" className="font-bold text-blue-500">
+            <Link to="/withdraw" className="font-bold text-blue-500 ml-1">
               Withdraw here
             </Link>
           </h6>

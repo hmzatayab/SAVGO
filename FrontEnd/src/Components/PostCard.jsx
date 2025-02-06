@@ -6,7 +6,7 @@ import { UserDataContext } from "../context/UserContext";
 
 function PostCard({ posts }) {
   // console.log(posts.comments);
-  
+
   const { user } = useContext(UserDataContext);
 
   return (

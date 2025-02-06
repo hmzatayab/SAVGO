@@ -1,13 +1,36 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
+import axios from "axios";
 
 export const Header = () => {
   const token = localStorage.getItem("token");
   const { user } = useContext(UserDataContext);
+  const [balance, setBalance] = useState(0);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
+  useEffect(() => {
+    // Function to fetch the wallet balance
+    const fetchBalance = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/wallet/balance`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // assuming the token is stored in localStorage
+            },
+          }
+        );
+        setBalance(response.data.balance); // Assuming the API returns a `balance` field
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchBalance();
+  }, []);
 
   const formatFollowers = (count) => {
     if (count >= 10000) {
@@ -27,7 +50,11 @@ export const Header = () => {
             to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <img src="../../public/logo.png" alt="Logo" className="w-28 lg:w-36" />
+            <img
+              src="../../public/logo.png"
+              alt="Logo"
+              className="w-28 lg:w-36"
+            />
           </Link>
 
           {/* Desktop Menu */}
@@ -59,7 +86,7 @@ export const Header = () => {
                   </div>
 
                   {/* User Info */}
-                  <div className="flex flex-col ml-3 space-y-1">
+                  <div className="flex flex-col ml-3 ">
                     <span className="text-gray-200 text-sm font-semibold truncate">
                       {user.name
                         .split(" ")
@@ -70,10 +97,13 @@ export const Header = () => {
                         .trim()}
                     </span>
 
+                    {/* Money Icon and Balance */}
                     <div className="flex items-center text-gray-400 text-xs space-x-1">
-                      <i className="ri-user-fill"></i>
+                      <i className="ri-wallet-2-line text-blue-500 text-sm"></i>{" "}
+                      {/* Money Icon */}
                       <span className="font-medium text-white">
-                        {formatFollowers(user.followers.length || 0)}
+                        {balance ? `$${balance.toFixed(2)}` : "$0.00"}{" "}
+                        {/* User Balance */}
                       </span>
                     </div>
                   </div>
@@ -118,7 +148,9 @@ export const Header = () => {
         } transition-transform duration-300 z-40 lg:hidden`}
       >
         <div className="flex justify-between items-center mb-6">
-          <h5 className="text-gray-500 dark:text-gray-200 font-semibold">Menu</h5>
+          <h5 className="text-gray-500 dark:text-gray-200 font-semibold">
+            Menu
+          </h5>
           <button
             onClick={toggleDrawer}
             className="text-gray-500 dark:text-gray-400"
