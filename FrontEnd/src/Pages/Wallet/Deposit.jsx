@@ -29,7 +29,7 @@ export const DepositPage = () => {
 
       if (response.status === 200) {
         showNotification("Deposit Successful!");
-        navigate("/dashboard");
+        navigate("/wallet");
       }
     } catch (error) {
       showNotification(error.response?.data?.message || "Deposit failed");

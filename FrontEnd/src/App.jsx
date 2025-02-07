@@ -23,17 +23,27 @@ import { DepositPage } from "./Pages/Wallet/Deposit.jsx";
 import { WithdrawPage } from "./Pages/Wallet/Withdraw.jsx";
 import { TransferPage } from "./Pages/Wallet/Transfer.jsx";
 import Wallet  from "./Pages/Wallet/wallet.jsx";
+import InvoiceReceipt from "./Pages/Invoice.jsx";
 
 
 function App() {
   const location = useLocation();
-  const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing"];
+  // const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing", "/invoice/:transactionId"];
+
+  // 🚀 Function to hide header and footer on specific routes
+  const shouldHideHeader = () => {
+    const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing"];
+    const dynamicRouteRegex = /^\/invoice\/[^/]+$/; // Matches "/invoice/any-id"
+
+    return hideHeaderPaths.includes(location.pathname) || dynamicRouteRegex.test(location.pathname);
+  };
 
 
   return(
     <div>
       <ToastContainer position="top-right" autoClose={3000} />
-      {!hideHeaderPaths.includes(location.pathname) && <Header />}
+      {/* {!hideHeaderPaths.includes(location.pathname) && <Header />} */}
+      {!shouldHideHeader() && <Header />}
       <NotificationProvider>
       <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
@@ -47,6 +57,7 @@ function App() {
         <Route path="/withdraw" element={<UserProtectWrapper><WithdrawPage/></UserProtectWrapper>}/>
         <Route path="/transfer" element={<UserProtectWrapper><TransferPage/></UserProtectWrapper>}/>
         <Route path="/wallet" element={<UserProtectWrapper><Wallet/></UserProtectWrapper>}/>
+        <Route path="/invoice/:transactionId" element={<UserProtectWrapper><InvoiceReceipt/></UserProtectWrapper>}/>
         <Route path="/post/:id" element={<PostDetail></PostDetail>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>
@@ -57,7 +68,8 @@ function App() {
       </Routes>
       </AnimatePresence>
       </NotificationProvider>
-      {!hideHeaderPaths.includes(location.pathname) && <Footer/>}
+      {/* {!hideHeaderPaths.includes(location.pathname) && <Footer/>} */}
+      {!shouldHideHeader() && <Footer />}
     </div>
   )
 }

@@ -181,16 +181,65 @@ export const getWalletBalance = async (req, res) => {
 export const getWalletTransactions = async (req, res) => {
   try {
     const userId = req.user.id;
+
+    // User ka wallet find karo
     const wallet = await Wallet.findOne({ user: userId });
     if (!wallet) {
       return res.status(404).json({ message: "Wallet not found." });
     }
-    const transactions = await Transaction.find({ wallet: wallet._id }).sort({
-      createdAt: -1,
-    });
+
+    // Transactions fetch with full population
+    const transactions = await Transaction.find({ wallet: wallet._id })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "wallet",
+        populate: {
+          path: "user",
+          select: "name image", // Sirf required fields
+        },
+      })
+      .populate({
+        path: "recipientWallet",
+        populate: {
+          path: "user",
+          select: "name image", // Recipient user ka data bhi milega
+        },
+      });
+
     res.status(200).json({ transactions });
   } catch (error) {
     console.error("Error in getWalletTransactions:", error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getTransactionInvoice = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+
+    const transaction = await Transaction.findById(transactionId)
+      .populate({
+        path: "wallet",
+        populate: {
+          path: "user",
+          select: "name image", // User ke name aur image fetch kar raha h
+        },
+      })
+      .populate({
+        path: "recipientWallet",
+        populate: {
+          path: "user",
+          select: "name image", // Recipient user ka bhi name aur image fetch karega
+        },
+      });
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    res.json(transaction);
+  } catch (error) {
+    console.error("Error fetching transaction:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

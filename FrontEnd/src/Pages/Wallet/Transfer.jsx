@@ -88,7 +88,7 @@ export const TransferPage = () => {
 
       if (response.status === 200) {
         showNotification("Transfer Successful!");
-        navigate("/dashboard");
+        navigate("/wallet");
       }
     } catch (error) {
       showNotification(error.response?.data?.message || "Transfer failed");

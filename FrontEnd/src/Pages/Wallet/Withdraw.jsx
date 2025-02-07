@@ -34,7 +34,7 @@ export const WithdrawPage = () => {
 
       if (response.status === 200) {
         showNotification("Withdrawal Successful!");
-        navigate("/dashboard");
+        navigate("/wallet");
       }
     } catch (error) {
       showNotification(error.response?.data?.message || "Withdrawal failed");
