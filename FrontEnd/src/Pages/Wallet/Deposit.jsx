@@ -73,8 +73,8 @@ export const DepositPage = () => {
           </h6>
 
           <p className="text-center">
-            <Link to="/dashboard" className="text-blue-500 font-bold">
-              Go Back to Dashboard
+            <Link to="/wallet" className="text-blue-500 font-bold">
+              Go Back to Wallet
             </Link>
           </p>
         </div>

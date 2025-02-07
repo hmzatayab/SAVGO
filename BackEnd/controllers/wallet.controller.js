@@ -1,5 +1,6 @@
 import { Wallet } from "../models/wallet.model.js";
 import User from "../models/user.model.js";
+import Transaction from "../models/transaction.model.js";
 
 // Deposit Funds
 export const depositFunds = async (req, res) => {
@@ -30,6 +31,18 @@ export const depositFunds = async (req, res) => {
     wallet.balance += amount;
     await wallet.save();
 
+    const transaction = new Transaction({
+      wallet: wallet._id,
+      amount,
+      type: "deposit",
+      status: "completed",
+    });
+
+    await transaction.save();
+
+    wallet.transactions.push(transaction._id);
+    await wallet.save();
+
     res.status(200).json({
       message: "Funds deposited successfully",
       balance: wallet.balance,
@@ -46,6 +59,7 @@ export const withdrawFunds = async (req, res) => {
     const userId = req.user.id;
 
     let wallet = await Wallet.findOne({ user: userId });
+    console.log(wallet);
 
     if (!wallet || !wallet.isActive) {
       return res
@@ -58,6 +72,18 @@ export const withdrawFunds = async (req, res) => {
     }
 
     wallet.balance -= amount;
+    await wallet.save();
+
+    const transaction = new Transaction({
+      wallet: wallet._id,
+      amount,
+      type: "withdraw",
+      status: "completed",
+    });
+
+    await transaction.save();
+
+    wallet.transactions.push(transaction._id);
     await wallet.save();
 
     res.status(200).json({
@@ -109,12 +135,21 @@ export const transferFunds = async (req, res) => {
     await senderWallet.save();
     await recipientWallet.save();
 
-    // // Notify users
-    // const senderMessage = `You have transferred ${amount} to ${recipientWallet.user.username}.`;
-    // const recipientMessage = `You have received ${amount} from ${senderWallet.user.username}.`;
+    const transaction = new Transaction({
+      wallet: senderWallet._id,
+      recipientWallet: recipientWallet._id,
+      amount,
+      type: "transfer",
+      status: "completed",
+    });
 
-    // await createNotification(senderId, "TRANSFER", senderMessage);
-    // await createNotification(recipient, "TRANSFER", recipientMessage);
+    await transaction.save();
+
+    senderWallet.transactions.push(transaction._id);
+    recipientWallet.transactions.push(transaction._id);
+
+    await senderWallet.save();
+    await recipientWallet.save();
 
     res.status(200).json({
       message: "Transfer Successful!",
@@ -140,5 +175,22 @@ export const getWalletBalance = async (req, res) => {
     res.status(200).json({ balance: wallet.balance });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+
+export const getWalletTransactions = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const wallet = await Wallet.findOne({ user: userId });
+    if (!wallet) {
+      return res.status(404).json({ message: "Wallet not found." });
+    }
+    const transactions = await Transaction.find({ wallet: wallet._id }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json({ transactions });
+  } catch (error) {
+    console.error("Error in getWalletTransactions:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

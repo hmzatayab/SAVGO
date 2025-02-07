@@ -11,6 +11,7 @@ export const TransferPage = () => {
   const [recipient, setRecipient] = useState(""); // State for recipient username
   const [recipientUser, setRecipientUser] = useState(null); // Selected recipient user data
   const [userList, setUserList] = useState([]); // List of all users for search
+  const [showNextButton, setShowNextButton] = useState(false);
   const { showNotification } = useNotification();
   const token = localStorage.getItem("token");
   const { user } = useContext(UserDataContext);
@@ -43,6 +44,14 @@ export const TransferPage = () => {
       (user) => user.username.toLowerCase() === username.toLowerCase()
     );
     setRecipientUser(selectedUser); // Store selected user
+
+    // If a valid recipient is found, delay showing the Next button by 2 seconds
+    if (selectedUser && selectedUser._id !== user._id) {
+      setShowNextButton(false); // Hide the button first
+      setTimeout(() => setShowNextButton(true), 1000); // Show after 2 seconds
+    } else {
+      setShowNextButton(false); // Hide if recipient is invalid
+    }
   };
 
   // Handle Next button click (proceed to Step 2)
@@ -156,13 +165,15 @@ export const TransferPage = () => {
                 )}
 
                 {/* Next Button */}
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="w-full py-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-green-500 hover:to-blue-500 text-white font-bold rounded-lg cursor-pointer transition-all duration-300"
-                >
-                  Next
-                </button>
+                {showNextButton && (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="w-full py-2 bg-gradient-to-r from-blue-500 to-green-500 hover:from-green-500 hover:to-blue-500 text-white font-bold rounded-lg cursor-pointer transition-all duration-300"
+                  >
+                    Next
+                  </button>
+                )}
               </form>
             </div>
           )}
@@ -241,8 +252,8 @@ export const TransferPage = () => {
           </h6>
 
           <p className="text-center">
-            <Link to="/dashboard" className="text-blue-500 font-bold">
-              Go Back to Dashboard
+            <Link to="/wallet" className="text-blue-500 font-bold">
+              Go Back to Wallet
             </Link>
           </p>
         </div>

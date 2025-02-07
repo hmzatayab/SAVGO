@@ -19,6 +19,11 @@ export const WithdrawPage = () => {
       return;
     }
 
+    if (Number(amount) < 50) {
+        showNotification("Minimum withdrawal amount is $50.");
+        return;
+      }
+
     try {
       const response = await axios.post(
         "http://localhost:3000/wallet/withdraw",
@@ -53,7 +58,7 @@ export const WithdrawPage = () => {
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount"
+              placeholder="Enter amount (Min: $50)"
               className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:ring-4 focus:ring-indigo-500 outline-none placeholder-gray-400 transition-all duration-300"
             />
 
@@ -73,8 +78,8 @@ export const WithdrawPage = () => {
           </h6>
 
           <p className="text-center">
-            <Link to="/dashboard" className="text-blue-500 font-bold">
-              Go Back to Dashboard
+            <Link to="/wallet" className="text-blue-500 font-bold">
+              Go Back to Wallet
             </Link>
           </p>
         </div>

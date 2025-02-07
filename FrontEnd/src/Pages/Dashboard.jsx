@@ -148,7 +148,7 @@ const ProfilePage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {/* Followers */}
           <Link to={`/followers/${user._id}`}>
-            <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <div className="relative p-6 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
               <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 blur-lg"></div>
               <div className="relative z-10 text-center">
                 <h2 className="text-3xl font-bold text-white">
@@ -160,7 +160,7 @@ const ProfilePage = () => {
           </Link>
 
           {/* Following */}
-          <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+          <div className="relative p-6 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
             <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-green-500 to-blue-500 opacity-20 blur-lg"></div>
             <div className="relative z-10 text-center">
               <h2 className="text-3xl font-bold text-white">
@@ -171,7 +171,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Profile Views */}
-          <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+          <div className="relative p-6 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
             <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-yellow-500 to-orange-500 opacity-20 blur-lg"></div>
             <div className="relative z-10 text-center">
               <h2 className="text-3xl font-bold text-white">1.2K</h2>
@@ -180,7 +180,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Total Sales */}
-          <div className="relative p-6 rounded-3xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
+          <div className="relative p-6 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-105">
             <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-pink-500 to-red-500 opacity-20 blur-lg"></div>
             <div className="relative z-10 text-center">
               <h2 className="text-3xl font-bold text-white">$5.6K</h2>
@@ -191,28 +191,30 @@ const ProfilePage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
           {/* Total Balance */}
-          <div className="relative p-6 rounded-3xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
-            <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-yellow-400 to-orange-500 opacity-20 blur-lg"></div>
-            <h2 className="text-3xl font-bold text-white relative">
-              {balance !== null ? `$${balance}` : "No balance available"}
-            </h2>
-            <p className="text-gray-400 mt-2">Total Balance</p>
-          </div>
+          <Link to={"/wallet"}>
+            <div className="relative p-6 rounded-2xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+              <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-yellow-400 to-orange-500 opacity-20 blur-lg"></div>
+              <h2 className="text-3xl font-bold text-white relative">
+                {balance !== null ? `$${balance}` : "No balance available"}
+              </h2>
+              <p className="text-gray-400 mt-2">Total Balance</p>
+            </div>
+          </Link>
 
           {/* Withdraw Button */}
           <Link to="/withdraw">
-            <div className="relative p-6 rounded-3xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+            <div className="relative p-6 rounded-2xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
               <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-red-500 to-pink-500 opacity-20 blur-lg"></div>
               <h2 className="text-3xl font-bold text-white relative">
                 Withdraw
               </h2>
-              <p className="text-gray-400 mt-2">Maximum $100</p>
+              <p className="text-gray-400 mt-2">Minimum $50</p>
             </div>
           </Link>
 
           {/* Deposit Button */}
           <Link to="/deposit">
-            <div className="relative p-6 rounded-3xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+            <div className="relative p-6 rounded-2xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
               <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-green-400 to-blue-500 opacity-20 blur-lg"></div>
               <h2 className="text-3xl font-bold text-white relative">
                 Deposit
@@ -223,7 +225,7 @@ const ProfilePage = () => {
 
           {/* Transfer Funds */}
           <Link to="/transfer">
-            <div className="relative p-6 rounded-3xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+            <div className="relative p-6 rounded-2xl shadow-xl bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-2xl hover:scale-105">
               <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 blur-lg"></div>
               <h2 className="text-3xl font-bold text-white relative">
                 Transfer Funds

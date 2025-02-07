@@ -22,6 +22,7 @@ import Game from "./Pages/Game.jsx";
 import { DepositPage } from "./Pages/Wallet/Deposit.jsx";
 import { WithdrawPage } from "./Pages/Wallet/Withdraw.jsx";
 import { TransferPage } from "./Pages/Wallet/Transfer.jsx";
+import Wallet  from "./Pages/Wallet/wallet.jsx";
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
         <Route path="/deposit" element={<UserProtectWrapper><DepositPage/></UserProtectWrapper>}/>
         <Route path="/withdraw" element={<UserProtectWrapper><WithdrawPage/></UserProtectWrapper>}/>
         <Route path="/transfer" element={<UserProtectWrapper><TransferPage/></UserProtectWrapper>}/>
+        <Route path="/wallet" element={<UserProtectWrapper><Wallet/></UserProtectWrapper>}/>
         <Route path="/post/:id" element={<PostDetail></PostDetail>}/>
         <Route path="/update" element={<UserProtectWrapper><UpdateUser/></UserProtectWrapper>}/>
         <Route path="/logout" element={<UserProtectWrapper><LogoutPage/></UserProtectWrapper>}/>

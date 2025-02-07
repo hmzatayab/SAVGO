@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const walletSchema = new mongoose.Schema(
   {
     user: {
@@ -14,19 +13,9 @@ const walletSchema = new mongoose.Schema(
     },
     transactions: [
       {
-        type: {
-          type: String,
-          enum: ["deposit", "withdrawal", "bid", "auction_win"],
-          required: true,
-        },
-        amount: {
-          type: Number,
-          required: true,
-        },
-        timestamp: {
-          type: Date,
-          default: Date.now,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Transaction",
+        required: true,
       },
     ],
     isActive: {
