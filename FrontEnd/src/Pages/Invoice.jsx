@@ -6,7 +6,6 @@ import "jspdf-autotable";
 const InvoiceReceipt = () => {
   const { transactionId } = useParams();
   const [transaction, setTransaction] = useState(null);
-  console.log(transaction);
 
   useEffect(() => {
     fetch(`http://localhost:3000/wallet/transaction/${transactionId}`, {

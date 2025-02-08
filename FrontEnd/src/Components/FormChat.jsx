@@ -68,7 +68,7 @@ const WeeklyFinanceReport = ({ transactions }) => {
   const financeData = processFinanceData(transactions);
 
   return (
-    <div className="bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
+    <div className="bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
       <h3 className="text-lg sm:text-xl font-bold mb-4 text-center sm:text-left">
         Weekly Finance Overview
       </h3>

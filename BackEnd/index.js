@@ -7,6 +7,7 @@ import path from 'path';
 import userRouter from './routers/user.routes.js';
 import auctionRouter from './routers/auction.routes.js';
 import walletRouter from './routers/wallet.routes.js'
+import adminRoute from "./routers/admin.routes.js"
 import profileRouter from './routers/profile.routes.js';
 import commentRouter from './routers/comment.routes.js';
 import { fileURLToPath } from 'url';
@@ -104,6 +105,8 @@ app.use("/c", commentRouter);
 app.use("/game", gameRouter);
 app.use("/auction", auctionRouter)
 app.use("/wallet", walletRouter)
+
+app.use("/admin", adminRoute)
 
 // Server Start
 const PORT = process.env.PORT || 5000;

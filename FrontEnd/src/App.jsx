@@ -24,6 +24,9 @@ import { WithdrawPage } from "./Pages/Wallet/Withdraw.jsx";
 import { TransferPage } from "./Pages/Wallet/Transfer.jsx";
 import Wallet  from "./Pages/Wallet/wallet.jsx";
 import InvoiceReceipt from "./Pages/Invoice.jsx";
+import Dashboard from "./Pages/Admin/Dashboard.jsx";
+import {AdminLogin} from "./Pages/Admin/Login";
+import {AdminLogout} from "./Pages/Admin/Logout.jsx"
 
 
 function App() {
@@ -32,7 +35,7 @@ function App() {
 
   // 🚀 Function to hide header and footer on specific routes
   const shouldHideHeader = () => {
-    const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing"];
+    const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing", "/admin", "/admin/register", "/admin/login" ];
     const dynamicRouteRegex = /^\/invoice\/[^/]+$/; // Matches "/invoice/any-id"
 
     return hideHeaderPaths.includes(location.pathname) || dynamicRouteRegex.test(location.pathname);
@@ -65,6 +68,11 @@ function App() {
         <Route path="/followers/:id" element={<Followers></Followers>}/>
         <Route path="/wishlist" element={<UserProtectWrapper><Wishlist/></UserProtectWrapper>}/>
         <Route path="/pricing" element={<Pricing/>}/>
+
+
+        <Route path="/admin" element={<Dashboard/>}/>
+        <Route path="/admin/login" element={<AdminLogin/>}/>
+        <Route path="/admin/logout" element={<AdminLogout/>}/>
       </Routes>
       </AnimatePresence>
       </NotificationProvider>
