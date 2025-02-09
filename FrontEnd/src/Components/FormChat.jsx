@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -8,33 +9,33 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { format, startOfWeek } from "date-fns";
+import { format, startOfWeek, startOfMonth } from "date-fns";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
-const processFinanceData = (transactions) => {
-  const weeklyData = {};
+const processFinanceData = (transactions, mode) => {
+  const financeData = {};
 
   transactions.forEach((transaction) => {
-    const week = format(startOfWeek(new Date(transaction.createdAt)), "MMM dd"); // Example: "Feb 05"
+    let key;
 
-    if (!weeklyData[week]) {
-      weeklyData[week] = { deposit: 0, withdraw: 0, transfer: 0 };
+    if (mode === "weekly") {
+      key = format(startOfWeek(new Date(transaction.createdAt)), "MMM dd"); // Example: "Feb 05"
+    } else {
+      key = format(startOfMonth(new Date(transaction.createdAt)), "MMM yyyy"); // Example: "Feb 2025"
     }
 
-    if (transaction.type === "deposit") {
-      weeklyData[week].deposit += transaction.amount;
-    } else if (transaction.type === "withdraw") {
-      weeklyData[week].withdraw += transaction.amount;
-    } else if (transaction.type === "transfer") {
-      weeklyData[week].transfer += transaction.amount;
+    if (!financeData[key]) {
+      financeData[key] = { deposit: 0, withdraw: 0, transfer: 0 };
     }
+
+    financeData[key][transaction.type] += transaction.amount;
   });
 
-  const labels = Object.keys(weeklyData);
-  const depositData = labels.map((week) => weeklyData[week].deposit);
-  const withdrawData = labels.map((week) => weeklyData[week].withdraw);
-  const transferData = labels.map((week) => weeklyData[week].transfer);
+  const labels = Object.keys(financeData);
+  const depositData = labels.map((key) => financeData[key].deposit);
+  const withdrawData = labels.map((key) => financeData[key].withdraw);
+  const transferData = labels.map((key) => financeData[key].transfer);
 
   return {
     labels,
@@ -65,13 +66,35 @@ const processFinanceData = (transactions) => {
 };
 
 const WeeklyFinanceReport = ({ transactions }) => {
-  const financeData = processFinanceData(transactions);
+  const [mode, setMode] = useState("weekly"); // Default Weekly
+  const financeData = processFinanceData(transactions, mode);
 
   return (
     <div className="bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
-      <h3 className="text-lg sm:text-xl font-bold mb-4 text-center sm:text-left">
-        Weekly Finance Overview
-      </h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg sm:text-xl font-bold">Finance Overview ({mode})</h3>
+        
+        {/* Toggle Buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setMode("weekly")}
+            className={`px-4 py-1 rounded-lg ${
+              mode === "weekly" ? "bg-yellow-500 text-white" : "bg-gray-700 text-gray-400"
+            }`}
+          >
+            Weekly
+          </button>
+          <button
+            onClick={() => setMode("monthly")}
+            className={`px-4 py-1 rounded-lg ${
+              mode === "monthly" ? "bg-purple-500 text-white" : "bg-gray-700 text-gray-400"
+            }`}
+          >
+            Monthly
+          </button>
+        </div>
+      </div>
+
       <div className="w-full overflow-x-auto">
         <div className="w-[300px] sm:w-[500px] md:w-[700px] lg:w-full">
           <Line

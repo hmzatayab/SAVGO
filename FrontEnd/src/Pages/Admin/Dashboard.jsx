@@ -1,16 +1,52 @@
 import axios from "axios";
-import { Menu } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import SidebarCom from "../../Components/Admin/Sidebar";
 import { Link } from "react-router-dom";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
+  const [shuffledImages, setShuffledImages] = useState([]);
 
-  const shuffledImages = users
-    .map((user) => user.image) // Sirf images extract karo
-    .sort(() => Math.random() - 0.5) // Shuffle karo
-    .slice(0, 4); // Sirf pehli 4 images lo
+  const totalAmounts = users.reduce(
+    (acc, user) => {
+        user.wallet?.transactions.forEach((transaction) => {
+            if (transaction.type === "transfer" || transaction.type === "withdraw") {
+                acc.withdrawTotal += transaction.amount; // Withdraw aur transfer ka sum
+            } else if (transaction.type === "deposit") {
+                acc.depositTotal += transaction.amount; // Deposit ka sum
+            }
+        });
+        return acc;
+    },
+    { withdrawTotal: 0, depositTotal: 0 } // Initial values
+);
+
+const formatBalance = (balance) => {
+    if (balance >= 1000000) {
+      return (balance / 1000000).toFixed(1) + "M"; // 1M format
+    } else if (balance >= 1000) {
+      return (balance / 1000).toFixed(1) + "K"; // 1K format
+    }
+    return balance; // Agar 1000 se kam hai to as it is
+  };
+  
+
+  useEffect(() => {
+    const shuffleImages = () => {
+      const images = users
+        .map((user) => user.image) // Sirf images extract karo
+        .sort(() => Math.random() - 0.5) // Shuffle karo
+        .slice(0, 4); // Sirf pehli 4 images lo
+
+      setShuffledImages(images);
+    };
+
+    shuffleImages(); // Pehli dafa shuffle karo
+
+    const interval = setInterval(shuffleImages, 2000); // Har 5 sec bad shuffle karo
+
+    return () => clearInterval(interval); // Cleanup jab component unmount ho
+  }, [users]);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -34,63 +70,7 @@ const Sidebar = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Toggle Button for Mobile */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-400 hover:text-white sm:hidden"
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 backdrop-blur-lg border-r border-gray-700 shadow-xl ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0`}
-      >
-        <div className="h-full flex flex-col justify-between px-3 py-6">
-          <div>
-            <Link to="/" className="flex items-center ps-2.5 mb-6">
-              <img
-                src="../../../public/logo.png"
-                alt="Logo"
-                className="w-32 lg:w-40 drop-shadow-lg"
-              />
-            </Link>
-            <ul className="space-y-3 font-medium">
-              <li>
-                <Link
-                  to="/admin"
-                  className="flex items-center p-3 rounded-lg text-gray-200 hover:text-white transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-500"
-                >
-                  <i className="ri-dashboard-line text-lg"></i>
-                  <span className="ms-3">Dashboard</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/users"
-                  className="flex items-center p-3 rounded-lg text-gray-200 hover:text-white transition-all duration-300 bg-gradient-to-r from-green-600 to-blue-500 hover:from-green-700 hover:to-blue-400"
-                >
-                  <i className="ri-group-line text-lg"></i>
-                  <span className="ms-3">Users</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Logout Button - Last Item */}
-          <div className="mt-auto">
-            <Link
-              to="/admin/logout"
-              className="flex items-center p-3 rounded-lg text-gray-200 hover:text-white transition-all duration-300 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-400"
-            >
-              <i className="ri-logout-circle-line text-lg"></i>
-              <span className="ms-3">Logout</span>
-            </Link>
-          </div>
-        </div>
-      </aside>
+      <SidebarCom />
 
       {/* Main Content */}
       <div className="flex-1 p-6 sm:ml-64 bg-gray-900 min-h-screen">
@@ -99,12 +79,14 @@ const Sidebar = () => {
             {/* Balance Section */}
             <div className="ml-4">
               <div>
-                <span className="text-white font-bold text-3xl">Balance</span>
+                <span className="text-white font-bold text-3xl">
+                  Transactions
+                </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-green-400 text-sm">+$ 203k</span>
-                <span className="text-gray-400 text-sm">•</span>
-                <span className="text-red-400 text-sm">-$ 203k</span>
+                <span className="text-green-400 text-lg">+${formatBalance(totalAmounts.depositTotal)}</span>
+                <span className="text-gray-400 text-base">•</span>
+                <span className="text-red-400 text-lg">-${formatBalance(totalAmounts.withdrawTotal)}</span>
               </div>
             </div>
 
@@ -120,7 +102,7 @@ const Sidebar = () => {
                   />
                 ))}
               </div>
-              <span className="text-white font-bold text-2xl">
+              <span className="text-white font-bold text-3xl">
                 + {users.length - 4}
               </span>
             </div>
@@ -142,7 +124,7 @@ const Sidebar = () => {
                   />
                 ))}
               </div>
-              <span className="text-white font-bold text-2xl">+ 10k</span>
+              <span className="text-white font-bold text-3xl">+ 10k</span>
             </div>
 
             {/* Button */}
@@ -159,11 +141,65 @@ const Sidebar = () => {
               alt="Profile"
             />
             <div className="font-medium pr-8">
-              <div className="text-lg">Jese Leos</div>
+              <div className="text-lg">Hamza T.</div>
               <div className="text-xs text-gray-400">hamza@gmail.com</div>
             </div>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          <div className="relative p-6 h-60 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-95">
+            <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 blur-lg"></div>
+            <div className="relative z-10">
+              <div className="text-gray-300 mb-4">
+                <h2 className="text-2xl font-bold">Total User</h2>
+              </div>
+              <div className="flex -space-x-6">
+                {[
+                  "http://localhost:3000/Images/Uploads/b5eaaf47a6b6a2613758dc33.jpg",
+                  "https://cdn.lazyshop.com/files/9b0d8bde-34c0-460a-b131-e7a87b1e0543/other/1c3ae43f29b810bfa0a80dc812078c73.jpg",
+                  "https://img.freepik.com/premium-photo/beautiful-cute-anime-girl-innocent-anime-teenage_744422-6819.jpg?w=360",
+                  "http://localhost:3000/Images/Uploads/b67ad2a0327430251ff1d623.avif",
+                  "https://img.freepik.com/free-photo/medium-shot-anime-style-man-portrait_23-2151067428.jpg?semt=ais_hybrid",
+                  "https://imgcdn.stablediffusionweb.com/2024/11/19/ed3ca70e-3c44-4209-aef0-566797f7b652.jpg",
+                  "https://i.pinimg.com/736x/13/8c/93/138c93cd2cf946e4a58c04d77c347fb6.jpg",
+                ].map((src, index) => (
+                  <img
+                    key={index}
+                    className="w-14 h-14 border-2 border-white rounded-full"
+                    src={src}
+                    alt=""
+                  />
+                ))}
+              </div>
+              <Link to={"/admin/users"}>
+              <div className="text-gray-300 mt-4">
+                <p className="">
+                  Manage All Users here <button ><i class="ri-arrow-right-s-line">{}</i></button>
+                </p>
+              </div>
+              </Link>
+              <h2 className="text-white text-4xl mt-2 font-bold">{formatBalance(users.length)}</h2>
+            </div>
+          </div>
+
+          <div className="relative p-6 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-95">
+            <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-green-500 to-blue-500 opacity-20 blur-lg"></div>
+            <div className="relative z-10 text-center">
+              <h2 className="text-3xl font-bold text-white">23.2k</h2>
+              <p className="text-gray-400 mt-2">Followers</p>
+            </div>
+          </div>
+
+          <div className="relative p-6 rounded-2xl shadow-lg bg-gray-900 backdrop-blur-lg border border-gray-700 transition-all duration-300 hover:shadow-xl hover:scale-95">
+            <div className="absolute inset-0 w-full h-full rounded-3xl border-2 border-transparent bg-gradient-to-r from-yellow-500 to-orange-500 opacity-20 blur-lg"></div>
+            <div className="relative z-10 text-center">
+              <h2 className="text-3xl font-bold text-white">23.2k</h2>
+              <p className="text-gray-400 mt-2">Followers</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

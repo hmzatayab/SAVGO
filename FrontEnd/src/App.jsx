@@ -1,5 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import {UserProtectWrapper, UserRedirectWrapper} from "./Components/UserProtectWrapper.jsx";
+import {UserProtectWrapper, UserRedirectWrapper, AdminProtectWrapper} from "./Components/UserProtectWrapper.jsx";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
 import { LoginPage } from "./Pages/login";
 import { LogoutPage } from "./Pages/Logout";
@@ -27,6 +27,7 @@ import InvoiceReceipt from "./Pages/Invoice.jsx";
 import Dashboard from "./Pages/Admin/Dashboard.jsx";
 import {AdminLogin} from "./Pages/Admin/Login";
 import {AdminLogout} from "./Pages/Admin/Logout.jsx"
+import Users from "./Pages/Admin/Users.jsx";
 
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
 
   // 🚀 Function to hide header and footer on specific routes
   const shouldHideHeader = () => {
-    const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing", "/admin", "/admin/register", "/admin/login" ];
+    const hideHeaderPaths = ["/login", "/register", "/chat", "/update", "/pricing", "/admin", "/admin/register", "/admin/login", "/admin/users" ];
     const dynamicRouteRegex = /^\/invoice\/[^/]+$/; // Matches "/invoice/any-id"
 
     return hideHeaderPaths.includes(location.pathname) || dynamicRouteRegex.test(location.pathname);
@@ -70,9 +71,10 @@ function App() {
         <Route path="/pricing" element={<Pricing/>}/>
 
 
-        <Route path="/admin" element={<Dashboard/>}/>
+        <Route path="/admin" element={<AdminProtectWrapper><Dashboard/></AdminProtectWrapper>}/>
+        <Route path="/admin/users" element={<AdminProtectWrapper><Users/></AdminProtectWrapper>}/>
         <Route path="/admin/login" element={<AdminLogin/>}/>
-        <Route path="/admin/logout" element={<AdminLogout/>}/>
+        <Route path="/admin/logout" element={<AdminProtectWrapper><AdminLogout/></AdminProtectWrapper>}/>
       </Routes>
       </AnimatePresence>
       </NotificationProvider>

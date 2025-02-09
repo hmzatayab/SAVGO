@@ -3,10 +3,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const UserCard = ({ user }) => {
-  console.log(user);
 
   return (
-    <div className="h-screen">
+    <div className="">
       <div className="flex flex-col items-center p-6 border border-gray-700 shadow-2xl rounded-2xl hover:shadow-2xl transition-transform bg-gradient-to-br from-gray-800 to-gray-900 text-white transform hover:scale-105 duration-300">
         <Link to={`/profile/${user.username}`} className="relative group">
           <img

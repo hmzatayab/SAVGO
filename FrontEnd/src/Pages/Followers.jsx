@@ -8,7 +8,6 @@ const Followers = () => {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log(followers);
 
   useEffect(() => {
     // Fetch followers data from the API

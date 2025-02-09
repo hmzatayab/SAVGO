@@ -59,3 +59,20 @@ export const UserRedirectWrapper = ({
         </>
     )
 }
+
+export const AdminProtectWrapper = ({ children }) => {
+    const token = localStorage.getItem('adminToken')
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/admin/login')
+        }
+    }, [ token ])
+
+    return (
+        <>
+            {children}
+        </>
+    )
+}
