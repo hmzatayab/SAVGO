@@ -1,15 +1,32 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserDataContext } from "../context/UserContext";
+import NotificationDropdown from "./UserNotification";
 import axios from "axios";
+
 
 export const Header = () => {
   const token = localStorage.getItem("token");
   const { user } = useContext(UserDataContext);
   const [balance, setBalance] = useState(0);
+  const [notifications, setNotifications] = useState([]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/n/${user._id}`);
+        setNotifications(response.data); // Set notifications in state
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      } finally {
+      }
+    };
+
+    fetchNotifications();
+  }, [token]); // Run this when userId changes
 
   useEffect(() => {
     // Function to fetch the wallet balance
@@ -72,6 +89,9 @@ export const Header = () => {
 
           {token ? (
             <div className="flex items-center space-x-4">
+              {/* Notifications */} 
+              <NotificationDropdown notifications={notifications}/>
+
               <Link to="/dashboard">
                 <div className="flex items-center h-[60px] bg-gray-800 p-3 rounded-xl shadow-lg hover:shadow-xl transition duration-300 ease-in-out w-[140px] md:w-[160px] lg:w-[160px]">
                   {/* Profile Image with Circular Gradient Border */}
@@ -109,6 +129,8 @@ export const Header = () => {
                   </div>
                 </div>
               </Link>
+
+              
 
               {/* Menu Button */}
               <div className="flex justify-center items-center ml-3 lg:hidden">

@@ -1,6 +1,7 @@
 import Comment from "../models/comment.model.js";
 import { isValidObjectId } from "mongoose";
 import Post from "../models/post.model.js";
+import Notification from "../models/notification.model.js";
 import mongoose from "mongoose";
 
 // ✅ Add a new comment on a post
@@ -26,11 +27,24 @@ export const addComment = async (req, res) => {
     await newComment.save(); // Save comment to DB
 
     // Populate the `user` field
-    const populatedComment = await Comment.findById(newComment._id).populate( "user", "name, image");
+    const populatedComment = await Comment.findById(newComment._id).populate( "user", "name, image, username");
+    
 
     // Add comment ID to the post's comments array
     post.comments.push(newComment._id);
     await post.save(); // Save updated post
+
+    // 📌 **SEND NOTIFICATION TO POST OWNER (If commenter is not the owner)**
+    if (post.user._id.toString() !== userId.toString()) {
+      const notification = new Notification({
+        receiver: post.user._id, // Post Owner
+        sender: userId, // Commenter
+        type: "comment",
+        link: `http://localhost:5173/post/${post._id}`, // Link to post
+        message: `${populatedComment.user.username} commented on your post.`,
+      });
+      await notification.save();
+    }
 
     res.status(201).json({
       message: "Comment added successfully",

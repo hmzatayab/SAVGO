@@ -12,6 +12,7 @@ import profileRouter from './routers/profile.routes.js';
 import commentRouter from './routers/comment.routes.js';
 import { fileURLToPath } from 'url';
 import gameRouter from './routers/game.routes.js';
+import notificationRoute from "./routers/notification.routes.js"
 import http from 'http';
 import { Server } from 'socket.io';
 
@@ -105,6 +106,7 @@ app.use("/c", commentRouter);
 app.use("/game", gameRouter);
 app.use("/auction", auctionRouter)
 app.use("/wallet", walletRouter)
+app.use("/n", notificationRoute)
 
 app.use("/admin", adminRoute)
 

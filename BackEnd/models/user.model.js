@@ -110,6 +110,13 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Wallet",
     },
+    notification: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notification",
+        required: true,
+      },
+    ],
   },
   { timestamps: true }
 );

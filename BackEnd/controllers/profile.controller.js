@@ -1,5 +1,6 @@
 import userModel from "../models/user.model.js";
 import postModel from "../models/post.model.js";
+import Notification from "../models/notification.model.js";
 import mongoose from "mongoose";
 
 export const imageUpload = async (req, res) => {
@@ -128,24 +129,39 @@ export const likePost = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const post = await postModel.findById(id);
+    const post = await postModel.findById(id).populate("user"); // Populate user field
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
+
+    const postOwner = post.user._id; // Post owner ID
 
     // Find the index of user ID in the likes array
     const userIndex = post.likes.indexOf(user._id);
 
     if (userIndex === -1) {
-      // If user ID is not found, add it (like)
+      // ✅ User is liking the post
       post.likes.push(user._id);
 
       // Add the post to the user's wishlist
       if (!user.wishlist.includes(post._id)) {
         user.wishlist.push(post._id);
       }
+
+      // 📌 **SEND NOTIFICATION TO POST OWNER**
+      if (postOwner.toString() !== userId.toString()) {
+        const notification = new Notification({
+          receiver: postOwner, // Post Owner will receive notification
+          sender: userId, // Liker is the sender
+          type: "like",
+          link: `http://localhost:5173/post/${post._id}`, // Link to the post
+          message: `${user.name} liked your post.`,
+        });
+
+        await notification.save();
+      }
     } else {
-      // If user ID is found, remove it (unlike)
+      // ❌ User is unliking the post
       post.likes.splice(userIndex, 1);
 
       // Remove the post from the user's wishlist
@@ -199,7 +215,9 @@ export const getWishlist = async (req, res) => {
     user.wishlist = user.wishlist.map((item) => {
       // Post image URL
       if (item.postData) {
-        item.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${item.postData}`;
+        item.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${
+          item.postData
+        }`;
       }
 
       return item;
@@ -235,13 +253,18 @@ export const getProfile = async (req, res) => {
 export const postOpen = async (req, res) => {
   try {
     const { id } = req.params;
-    const post = await postModel.findById(id).populate("user").select("-password");
+    const post = await postModel
+      .findById(id)
+      .populate("user")
+      .select("-password");
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${post.postData}`;
+    post.imageURL = `${req.protocol}://${req.get("host")}/Images/Uploads/${
+      post.postData
+    }`;
 
     res.status(200).json(post);
   } catch (error) {

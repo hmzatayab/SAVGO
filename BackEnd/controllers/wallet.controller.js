@@ -1,6 +1,7 @@
 import { Wallet } from "../models/wallet.model.js";
 import User from "../models/user.model.js";
 import Transaction from "../models/transaction.model.js";
+import Notification from "../models/notification.model.js";
 
 // Deposit Funds
 export const depositFunds = async (req, res) => {
@@ -43,6 +44,16 @@ export const depositFunds = async (req, res) => {
     wallet.transactions.push(transaction._id);
     await wallet.save();
 
+    // 📌 **SEND NOTIFICATION TO USER**
+    const notification = new Notification({
+      receiver: userId,
+      sender: userId, 
+      type: "deposit",
+      link: "http://localhost:5173/wallet",
+      message: `Your deposit of $${amount} was successful.`,
+    });
+    await notification.save();
+
     res.status(200).json({
       message: "Funds deposited successfully",
       balance: wallet.balance,
@@ -59,7 +70,6 @@ export const withdrawFunds = async (req, res) => {
     const userId = req.user.id;
 
     let wallet = await Wallet.findOne({ user: userId });
-    console.log(wallet);
 
     if (!wallet || !wallet.isActive) {
       return res
@@ -85,6 +95,16 @@ export const withdrawFunds = async (req, res) => {
 
     wallet.transactions.push(transaction._id);
     await wallet.save();
+
+    // 📌 **SEND NOTIFICATION TO USER**
+    const notification = new Notification({
+      receiver: userId,
+      sender: userId, // Self-generated notification
+      type: "withdraw",
+      link: "http://localhost:5173/wallet",
+      message: `Your withdrawal of $${amount} was successful.`,
+    });
+    await notification.save();
 
     res.status(200).json({
       message: "Funds withdrawn successfully",
@@ -150,6 +170,26 @@ export const transferFunds = async (req, res) => {
 
     await senderWallet.save();
     await recipientWallet.save();
+
+    // 📌 **SEND NOTIFICATION TO SENDER**
+    const senderNotification = new Notification({
+      receiver: senderId,
+      sender: senderId,
+      type: "transfer",
+      link: "http://localhost:5173/wallet",
+      message: `You sent $${amount} to ${recipientUser.name}.`,
+    });
+    await senderNotification.save();
+
+    // 📌 **SEND NOTIFICATION TO RECIPIENT**
+    const recipientNotification = new Notification({
+      receiver: recipient,
+      sender: senderId, // Sender's ID
+      type: "transfer",
+      link: "http://localhost:5173/wallet",
+      message: `You received $${amount} from ${req.user.username}.`,
+    });
+    await recipientNotification.save();    
 
     res.status(200).json({
       message: "Transfer Successful!",

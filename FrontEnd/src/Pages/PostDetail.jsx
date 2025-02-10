@@ -304,7 +304,7 @@ function PostDetail() {
                 ))}
             </div>
 
-            <div className="mt-6 flex-1 flex flex-col">
+            <div className="mt-6 flex-1 flex flex-col justify-between">
               <div className="flex items-center mb-4 p-2 rounded-lg bg-gray-800">
                 <div className="flex items-center bg-gray-900 px-4 py-2 rounded-full space-x-2 mr-3">
                   <span className="text-sm sm:text-base font-semibold">
@@ -330,7 +330,7 @@ function PostDetail() {
 
               <div
                 className="space-y-4 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800 pr-2"
-                style={{ maxHeight: "300px" }}
+                style={{ maxHeight: "400px" }}
               >
                 {comments.map((comment) => (
                   <div
@@ -464,7 +464,7 @@ function PostDetail() {
           </div>
         </div>
 
-        <div  className="bg-gray-900 h-16 mt-4 lg:mx-64 px-5 rounded-xl ">
+        <div className="bg-gray-900 h-16 mt-4 lg:mx-64 px-5 rounded-xl ">
           hamza
         </div>
 
