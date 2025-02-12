@@ -252,11 +252,13 @@ const ProfilePage = () => {
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
               style={{ columnFill: "auto" }}
             >
+              
               {posts.map((post, index) => (
                 <div
                   key={index}
                   className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4 transition duration-500"
                 >
+                  
                   {/* Post Image */}
                   <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
                     <Link to={`/post/${post._id}`}>
@@ -294,18 +296,7 @@ const ProfilePage = () => {
                     </div>
 
                     {/* Actions */}
-                    {/* <div className="flex items-center justify-between mt-4 sm:mt-0 sm:space-x-6 w-full sm:w-auto">
-                      <div className="flex items-center space-x-2 text-gray-400">
-                        <LikeButton
-                          postId={post._id}
-                          initialLikes={post.likes.length}
-                          isInitiallyLiked={
-                            user?._id ? post.likes.includes(user._id) : false
-                          }
-                        />
-                      </div>
-                      <i className="ri-download-2-line text-white ri-lg sm:ri-xl cursor-pointer"></i>
-                    </div> */}
+
                     <div className="flex items-center justify-between mt-4 sm:mt-0 w-full sm:w-auto">
                       {/* Like Button */}
                       <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 mr-2 ">

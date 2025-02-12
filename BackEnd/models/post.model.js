@@ -69,7 +69,12 @@ const postSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Auction",
     default: null,
-  }
+  },
+  winner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null, // Auction winner track karega
+  },
 });
 
 export default mongoose.model("post", postSchema);

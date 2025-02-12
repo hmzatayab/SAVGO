@@ -125,6 +125,9 @@ const NotificationDropdown = ({ notifications }) => {
                         <div className="w-full ps-3">
                           <div className="text-gray-300 text-sm mb-1.5">
                             {notification.message}
+                            {!notification.isRead && (
+                              <i className="ri-circle-fill text-red-500 text-[10px] ml-1"></i>
+                            )}
                           </div>
                           <div className="text-xs text-gray-500">
                             {formatDistanceToNow(
@@ -134,11 +137,6 @@ const NotificationDropdown = ({ notifications }) => {
                           </div>
                         </div>
                       </Link>
-                    </div>
-                    <div className="justify-end mt-2">
-                      {!notification.isRead && (
-                        <i className="ri-circle-fill text-red-500 text-xs"></i>
-                      )}
                     </div>
                   </div>
                 );
