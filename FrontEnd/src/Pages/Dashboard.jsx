@@ -15,6 +15,230 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [balance, setBalance] = useState(0);
+  const [activeTab, setActiveTab] = useState("posts");
+  const [allPosts, setAllPosts] = useState([]);
+
+  const userWinnerPosts = allPosts.filter(post => post.winner === user._id);
+  console.log(userWinnerPosts);
+  
+
+  // console.log(allPosts[10].winner);
+  // console.log(user);
+  
+  
+  
+  useEffect(() => {
+      const getAllPosts = async () => {
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_BASE_URL}/user/all-posts`,
+            { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+          );
+          const data = await response.json();
+          setAllPosts(data.posts);
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      getAllPosts();
+    }, [token]);
+
+    const renderContent = () => {
+      switch (activeTab) {
+        case "posts":
+          return (
+            <div>
+          {loading ? (
+            <Skeleton />
+          ) : posts.length === 0 ? (
+            <p className="text-gray-400">No posts available.</p>
+          ) : (
+            <div
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              style={{ columnFill: "auto" }}
+            >
+              {posts.map((post, index) => (
+                <div
+                  key={index}
+                  className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4 transition duration-500"
+                >
+                  {/* Post Image */}
+                  <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
+                    <Link to={`/post/${post._id}`}>
+                      <img
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                        key={post._id}
+                        src={post.imageURL}
+                        alt="Post Image"
+                      />
+                    </Link>
+                  </div>
+
+                  {/* User Details & Actions */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
+                    {/* User Profile */}
+                    <div className="flex items-center space-x-4">
+                      <img
+                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                        src={user.image}
+                        alt="User Profile"
+                      />
+                      <div>
+                        <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
+                          {user.name.length > 5
+                            ? user.name.slice(0, 5) + "..."
+                            : user.name}
+                        </h3>
+                        <p className="text-gray-400 text-xs sm:text-sm italic">
+                          @
+                          {user.username.length > 10
+                            ? user.username.slice(0, 10) + "..."
+                            : user.username}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+
+
+
+                    {post.isLive ? (
+              <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+                <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full">
+                  <LikeButton
+                    postId={post._id}
+                    initialLikes={post.likes.length}
+                    isInitiallyLiked={user?._id ? post.likes.includes(user._id) : false}
+                  />
+                </div>
+                <Link to={`/post/${post._id}`}>
+                  <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full cursor-pointer">
+                    <i className="ri-chat-1-line text-gray-400 ri-lg mr-2"></i>
+                    <span className="text-white font-semibold text-sm sm:text-base">
+                      {post.comments.length}
+                    </span>
+                  </div>
+                </Link>
+              </div>
+            ) : (
+              <div className="bg-gray-800 px-4 py-2 rounded-full text-yellow-400 font-semibold text-lg mt-4 sm:mt-0">
+                In Review
+              </div>
+            )}
+
+
+
+
+                    
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+          );
+        case "win":
+          return (
+            <div>
+              {loading ? (
+            <Skeleton />
+          ) : userWinnerPosts.length === 0 ? (
+            <p className="text-gray-400">No winning posts available.</p>
+          ) : (
+            <div
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              style={{ columnFill: "auto" }}
+            >
+              {userWinnerPosts.map((post, index) => (
+                <div
+                  key={index}
+                  className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4 transition duration-500"
+                >
+                  {/* Post Image */}
+                  <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
+                    <Link to={`/post/${post._id}`}>
+                      <img
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                        key={post._id}
+                        src={post.imageURL}
+                        alt="Post Image"
+                      />
+                    </Link>
+                  </div>
+
+                  {/* User Details & Actions */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
+                    {/* User Profile */}
+                    <div className="flex items-center space-x-4">
+                      <img
+                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                        src={post.userData.image}
+                        alt="User Profile"
+                      />
+                      <div>
+                        <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
+                          {post.userData.name.length > 5
+                            ? post.userData.name.slice(0, 5) + "..."
+                            : post.userData.name}
+                        </h3>
+                        <p className="text-gray-400 text-xs sm:text-sm italic">
+                          @
+                          {post.userData.username.length > 10
+                            ? post.userData.username.slice(0, 10) + "..."
+                            : post.userData.username}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+
+
+
+                    
+              <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+                <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full">
+                  <LikeButton
+                    postId={post._id}
+                    initialLikes={post.likes.length}
+                    isInitiallyLiked={user?._id ? post.likes.includes(user._id) : false}
+                  />
+                </div>
+                <Link to={`/post/${post._id}`}>
+                  <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full cursor-pointer">
+                    <i className="ri-chat-1-line text-gray-400 ri-lg mr-2"></i>
+                    <span className="text-white font-semibold text-sm sm:text-base">
+                      {post.comments.length}
+                    </span>
+                  </div>
+                </Link>
+              </div>
+            
+
+
+
+
+                    
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+            </div>
+          );
+        case "lost":
+          return (
+            <div>
+              <h1>Lost Auction Post one</h1>
+              <h1>Lost Auction Post two</h1>
+              <h1>Lost Auction Post three</h1>
+            </div>
+          );
+        default:
+          return null;
+      }
+    };
 
   useEffect(() => {
     // Function to fetch the wallet balance
@@ -235,99 +459,58 @@ const ProfilePage = () => {
           </Link>
         </div>
 
-        {/* User Posts Section */}
-        <div>
-          <div className="relative mb-8">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-              Your Post's
-            </h2>
-            <div className="absolute left-0 top-full mt-2 h-1 w-16 bg-gradient-to-r from-indigo-500 to-pink-500 rounded"></div>
-          </div>
-          {loading ? (
-            <Skeleton />
-          ) : posts.length === 0 ? (
-            <p className="text-gray-400">No posts available.</p>
-          ) : (
-            <div
-              className="grid grid-cols-2 md:grid-cols-4 gap-4"
-              style={{ columnFill: "auto" }}
+        {/* <div className="w-full h-auto bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl shadow-lg border border-gray-700">
+          <div className="flex items-center justify-center py-2 px-2 text-lg font-semibold tracking-wide">
+            <button
+              className={getTabClass("posts")}
+              onClick={() => setActiveTab("posts")}
             >
-              
-              {posts.map((post, index) => (
-                <div
-                  key={index}
-                  className="break-inside-avoid bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden h-fit p-4 transition duration-500"
-                >
-                  
-                  {/* Post Image */}
-                  <div className="relative w-full pb-[140%] overflow-hidden rounded-lg">
-                    <Link to={`/post/${post._id}`}>
-                      <img
-                        className="absolute top-0 left-0 w-full h-full object-cover"
-                        key={post._id}
-                        src={post.imageURL}
-                        alt="Post Image"
-                      />
-                    </Link>
-                  </div>
+              <i className="ri-layout-grid-fill text-xl"></i>
+              <span>Your Posts</span>
+            </button>
+            <button
+              className={getTabClass("win")}
+              onClick={() => setActiveTab("win")}
+            >
+              <i className="ri-layout-masonry-fill text-xl"></i>
+              <span>Win Auctions</span>
+            </button>
+            <button
+              className={getTabClass("lost")}
+              onClick={() => setActiveTab("lost")}
+            >
+              <i className="ri-collage-fill text-xl"></i>
+              <span>Lost Auctions</span>
+            </button>
+          </div>
+        </div> */}
 
-                  {/* User Details & Actions */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between mt-4">
-                    {/* User Profile */}
-                    <div className="flex items-center space-x-4">
-                      <img
-                        className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
-                        src={user.image}
-                        alt="User Profile"
-                      />
-                      <div>
-                        <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg">
-                          {user.name.length > 5
-                            ? user.name.slice(0, 5) + "..."
-                            : user.name}
-                        </h3>
-                        <p className="text-gray-400 text-xs sm:text-sm italic">
-                          @
-                          {user.username.length > 10
-                            ? user.username.slice(0, 10) + "..."
-                            : user.username}
-                        </p>
-                      </div>
-                    </div>
+<div className="w-full h-auto bg-gray-800 rounded-2xl shadow-lg border border-gray-700">
+      <div className="flex items-center justify-center py-2 px-2 text-white text-lg font-semibold tracking-wide">
+        {[{label: 'Your Posts', key: 'posts', icon: 'ri-layout-grid-fill text-pink-400 '},
+          {label: 'Win Auctions', key: 'win', icon: 'ri-layout-masonry-fill text-yellow-400'},
+          {label: 'Lost Auctions', key: 'lost', icon: 'ri-collage-fill text-red-400'}].map(({label, key, icon}) => (
+          <div
+            key={key}
+            className={`flex w-full rounded-xl h-20 mr-2 justify-center items-center gap-2 cursor-pointer transition-transform transform hover:scale-95 ${activeTab === key ? 'bg-gray-700 shadow-xl text-blue-400' : 'bg-gray-600 text-white'}`}
+            onClick={() => setActiveTab(key)}
+          >
+            <i className={`${icon} text-xl`}></i>
+            <span>{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
 
-                    {/* Actions */}
-
-                    <div className="flex items-center justify-between mt-4 sm:mt-0 w-full sm:w-auto">
-                      {/* Like Button */}
-                      <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 mr-2 ">
-                        <LikeButton
-                          postId={post._id}
-                          initialLikes={post.likes.length}
-                          isInitiallyLiked={
-                            user?._id ? post.likes.includes(user._id) : false
-                          }
-                        />
-                      </div>
-
-                      {/* Comment Icon */}
-                      <Link to={`/post/${post._id}`}>
-                        <div className="flex items-center bg-gray-800 px-4 py-2 rounded-full space-x-2 cursor-pointer">
-                          <i className="ri-chat-1-line text-gray-400 ri-lg"></i>
-                          <span className="text-white font-semibold text-sm sm:text-base">
-                            {post.comments.length}
-                          </span>
-                        </div>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="">
+        {renderContent()}
+      </div>
+        
       </div>
     </>
   );
 };
 
 export default ProfilePage;
+
+

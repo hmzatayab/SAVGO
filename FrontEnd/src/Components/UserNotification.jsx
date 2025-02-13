@@ -23,39 +23,43 @@ const NotificationDropdown = ({ notifications }) => {
   const getNotificationIcon = (type) => {
     const icons = {
       message: {
-        icon: <i className="ri-mail-fill text-white text-xs"></i>,
+        icon: <i className="ri-mail-fill text-white text-[10px]"></i>,
         bg: "bg-blue-500",
       },
       follow: {
-        icon: <i className="ri-user-add-fill text-white text-xs"></i>,
+        icon: <i className="ri-user-add-fill text-white text-[10px]"></i>,
         bg: "bg-green-500",
       },
       like: {
-        icon: <i className="ri-heart-fill text-white text-xs"></i>,
+        icon: <i className="ri-heart-fill text-white text-[10px]"></i>,
         bg: "bg-red-500",
       },
       comment: {
-        icon: <i className="ri-chat-3-fill text-white text-xs"></i>,
+        icon: <i className="ri-chat-3-fill text-white text-[10px]"></i>,
         bg: "bg-purple-500",
       },
       mention: {
-        icon: <i className="ri-at-line text-white text-xs"></i>,
+        icon: <i className="ri-at-line text-white text-[10px]"></i>,
         bg: "bg-yellow-500",
       },
       withdraw: {
-        icon: <i className="ri-arrow-right-down-fill text-white text-xs"></i>,
+        icon: (
+          <i className="ri-arrow-right-down-fill text-white text-[10px]"></i>
+        ),
         bg: "bg-gray-500",
       },
       deposit: {
-        icon: <i className="ri-bank-fill text-white text-xs"></i>,
+        icon: <i className="ri-bank-fill text-white text-[10px]"></i>,
         bg: "bg-green-600",
       },
       transfer: {
-        icon: <i className="ri-arrow-left-right-line text-white text-xs"></i>,
+        icon: (
+          <i className="ri-arrow-left-right-line text-white text-[10px]"></i>
+        ),
         bg: "bg-blue-600",
       },
       other: {
-        icon: <i className="ri-information-fill text-white text-xs"></i>,
+        icon: <i className="ri-information-fill text-white text-[10px]"></i>,
         bg: "bg-gray-400",
       },
     };
@@ -117,7 +121,7 @@ const NotificationDropdown = ({ notifications }) => {
                           </Link>
                           {/* ✅ ICON Dynamic Based on Type */}
                           <div
-                            className={`absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 border border-gray-700 rounded-full ${bg}`}
+                            className={`absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 rounded-full ${bg}`}
                           >
                             {icon}
                           </div>

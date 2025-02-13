@@ -65,6 +65,10 @@ const postSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isLive: {
+    type: Boolean,
+    default: false,
+  },
   auctionId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Auction",
@@ -74,6 +78,11 @@ const postSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     default: null, // Auction winner track karega
+  },
+  lostAuctions: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null, // Auction lost track karega
   },
 });
 

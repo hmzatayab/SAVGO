@@ -213,7 +213,7 @@ const ProfilePage = () => {
           <p className="text-gray-400">No posts available.</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {posts.map((post, index) => (
+            {posts.filter(post => post.isLive).map((post, index) => (
               <div
                 key={index}
                 className="bg-gray-900 hover:bg-gray-950 shadow-lg rounded-lg overflow-hidden p-4 transition duration-500"

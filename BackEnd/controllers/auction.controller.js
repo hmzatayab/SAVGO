@@ -146,7 +146,7 @@ export const createAuction = async (req, res) => {
       } catch (err) {
         console.error("Error completing auction:", err);
       }
-    }, 120 * 1000); // ✅ 2 minutes (120,000 milliseconds) for testing
+    }, 600 * 1000); // ✅ 2 minutes (120,000 milliseconds) for testing
 
     // ✅ Send Notification to User
     const notification = new Notification({
@@ -487,3 +487,63 @@ export const endAuction = async (req, res) => {
   }
 };
 
+// Complete Auction
+export const completeAuction = async (req, res) => {
+  try {
+    const { auctionId } = req.params;
+    const auction = await Auction.findById(auctionId)
+      .populate("highestBidder")
+      .populate({ path: "bids", populate: { path: "user", select: "_id" } });
+
+    if (!auction) {
+      return res.status(404).json({ message: "Auction not found" });
+    }
+
+    const existingPost = await Post.findById(auction.post);
+
+    if (auction.highestBidder) {
+      existingPost.winner = auction.highestBidder._id;
+      existingPost.isAuctioned = false;
+      await existingPost.save();
+
+      // Notify Winner
+      await Notification.create({
+        receiver: auction.highestBidder._id,
+        sender: auction.seller,
+        type: "auction-win",
+        message: `🎉 You won the auction for post: ${existingPost.title}`,
+      });
+    } else {
+      existingPost.isAuctioned = false;
+      await existingPost.save();
+    }
+
+    // Notify Other Bidders
+    const uniqueBidders = [
+      ...new Set(auction.bids.map((bid) => bid.user._id.toString())),
+    ];
+    uniqueBidders.forEach(async (bidderId) => {
+      if (
+        auction.highestBidder &&
+        bidderId !== auction.highestBidder._id.toString()
+      ) {
+        await Notification.create({
+          receiver: bidderId,
+          sender: auction.seller,
+          type: "auction-lost",
+          message: `🛑 You lost the auction for post: ${existingPost.title}`,
+        });
+      }
+    });
+
+    // Update Auction Status
+    auction.status = "completed";
+    auction.winner = auction.highestBidder._id
+    await auction.save();
+
+    res.status(200).json({ message: "Auction completed successfully" });
+  } catch (error) {
+    console.error("Error completing auction:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

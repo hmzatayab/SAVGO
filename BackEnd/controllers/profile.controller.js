@@ -254,9 +254,20 @@ export const postOpen = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await postModel
-      .findById(id)
-      .populate("user")
-      .select("-password");
+  .findById(id)
+  .populate("user")
+  .populate({
+    path: "auctionId",
+    populate: [
+      { path: "seller", select: "name image" },
+      { path: "highestBidder", select: "name image" },
+      {
+        path: "bids",
+        populate: { path: "user", select: "name image" }
+      }
+    ]
+  })
+  .select("-password");
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
